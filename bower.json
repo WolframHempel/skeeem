@@ -1,0 +1,24 @@
+{
+  "name": "coxer",
+  "version": "1.0.0",
+  "homepage": "https://github.com/hoxton-one/coxer",
+  "authors": [
+    "Wolfram Hempel <wolfram.hempel@hoxton-one.com>"
+  ],
+  "description": "It's a color-mixer...what else?",
+  "main": "index.html",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "knockout": "~3.3.0",
+    "requirejs": "~2.1.20",
+    "three.js": "~0.72.0",
+    "tinycolor": "~1.2.1"
+  }
+}

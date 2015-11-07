@@ -7,30 +7,14 @@ define(function( require ){
 		this._settings = settings;
 		this._stage = new Stage( settings );
 		this._stage.on( 'update', this._update, this );
-		this._textureCanvas = document.createElement( 'canvas' );
-		this._textureCanvas.width = settings.width;
-		this._textureCanvas.height = settings.height;
-		this._ctx = this._textureCanvas.getContext( '2d' );
-		document.body.appendChild( this._textureCanvas );
-		//this._texture = this._createTextures();
-
-
-		//this._geometry = new THREE.CylinderGeometry( 2, 0, 3, 120, 10, false, 0.15 * Math.PI,  1.75 * Math.PI );
 		this._geometry = this._createGeometry();
-		// this._material = new THREE.MeshLambertMaterial( { 
-		// 	//color: 0x00ff00,
-		// 	map: this._texture,
-		// 	wireframe: false 
-		// } );
+
 		this._material = new THREE.PointsMaterial( { 
 			size: this._settings.pointSize,
 			vertexColors: THREE.VertexColors,
-			//map: this._texture,
-			//wireframe: false 
-		} );
-		//this._mesh = new THREE.Mesh( this._geometry, this._material );
-		this._points = new THREE.Points( this._geometry, this._material );
+		});
 
+		this._points = new THREE.Points( this._geometry, this._material );
 		this._stage.add( this._points );
 		this._stage.add( new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 ) );
 		this._spotLight = new THREE.SpotLight( 0xffffff);
@@ -49,10 +33,12 @@ define(function( require ){
 		var yEnd = this._settings.radius * Math.cos( this._settings.gapEnd );
 		var material = new THREE.LineBasicMaterial({ color: 0xffffff });
 		var yBase = this._settings.colorSpace === 'HSV' ? y2: 0;
+		var a;
+		
 		material.opacity = 0.3;
 		material.transparent = true;
 
-		for( var a = this._settings.gapEnd; a < this._settings.gapStart + 2 * Math.PI; a += 0.1 ) {
+		for( a = this._settings.gapEnd; a < this._settings.gapStart + 2 * Math.PI; a += 0.1 ) {
 			geometry.vertices.push( new THREE.Vector3( 
 				this._settings.radius * Math.sin( a ), 
 				yBase,
@@ -124,57 +110,8 @@ define(function( require ){
 		return new THREE.Color( rgb.r / 255, rgb.g / 255, rgb.b / 255 );
 	};
 
-	ColorCone.prototype._createTextures = function() {
-		var imageData = this._ctx.getImageData( 0, 0, this._settings.width, this._settings.height );
-		var i, x, y, l, a2, b2, alpha, rgb, maxX, minX, maxY, minY,
-			cx = this._settings.width / 2,
-			cy = this._settings.height / 2,
-			r = cx;
-		//Uint8ClampedArray
-		for( i = 0; i < imageData.data.length; i += 4 ) {
-			x = ( i / 4 ) % imageData.width;
-			y = Math.floor( (i / 4) / imageData.width );
-			maxX = Math.max( x, cx );
-			maxY =  Math.max( y, cy );
-			minX = Math.min( x, cx );
-			minY = Math.min( y, cy );
-			a2 = Math.pow( cx - x, 2 );
-			b2 = Math.pow( cy - y, 2 );
-			l = Math.sqrt( a2 + b2 );
-			alpha = Math.atan2(cy - y, cx - x) * 180 / Math.PI;
-			rgb = tinycolor({ h: alpha + 180, s: 100 * ( l / r ), v: 100 }).toRgb();
-
-			if( true /*l <= r*/ ) {
-				imageData.data[ i ] = rgb.r;
-				imageData.data[ i + 1 ] = rgb.g;
-				imageData.data[ i + 2 ] = rgb.b;
-				imageData.data[ i + 3 ] = 255;
-			}
-			
-		}
-
-		this._ctx.putImageData( imageData, 0, 0 );
-
-		var texture = new THREE.Texture( this._textureCanvas );
-		texture.mapping = THREE.SphericalReflectionMapping;
-		texture.offset.x = 0.5;
-		texture.offset.y = 0.5;xxx = this;
-		//texture.repeat = new THREE.Vector2( 0, 1 );
-		texture.needsUpdate  = true;
-
-		return texture;
-	};
-
 	ColorCone.prototype._update = function() {
-		//this._texture.offset.x += 0.01;
-		// if( this._texture.offset.x > 1 ) {
-		// 	this._texture.offset.x = 0;
-		// }
-		//this._texture.needsUpdate = true;
-		// this._pointlight.position.z += 0.1;
-		// this._pointlight.position.y -= 0.1;
-		// this._mesh.rotation.y += 0.01;
-		// this._mesh.rotation.y += 0.01;
+
 	};
 
 	return ColorCone;

@@ -8,5 +8,22 @@
 </head>
 <body>
 
+<div class="current-color" data-bind="style:{ 'background-color': hexValue }"></div>
+<ul class="color-spaces">
+	<li class="hsv">
+		<div class="example"></div>
+		<h3>Hue Saturation Value</h3>
+		<ul class="controls">
+			<li data-bind="template: { name: 'range-control', data: { label: 'Hue (0-360 degree)', name: 'hsv-hue', max: 360, obs: hsvHue } }"></li>
+			<li data-bind="template: { name: 'range-control', data: { label: 'Saturation (0-100%)', name: 'hsv-saturation', max: 100, obs: hsvSaturation } }"></li>
+			<li data-bind="template: { name: 'range-control', data: { label: 'Value (0-100%)', name: 'hsv-value', max: 100, obs: hsvValue } }"></li>
+		</ul>
+	</li>
+</ul>
+<template id="range-control">
+	<label data-bind="attr:{ for: name }, text: label"></label>
+	<input data-bind="attr:{ name: name, max: max }, textInput: obs" type="range" min="0"  step="1" />
+	<input type="number" data-bind="textInput: obs" />
+</template>
 </body>
 </html>

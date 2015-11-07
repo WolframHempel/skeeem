@@ -7,3 +7,8 @@
 body{
 	background-color: #000;
 }
+
+.current-color{
+	width: 400px;
+	height: 100px;
+}

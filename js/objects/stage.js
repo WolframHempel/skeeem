@@ -10,7 +10,8 @@ define(function( require ){
 		this.camera = new THREE.PerspectiveCamera( 75, this.settings.width / this.settings.height, 0.1, 1000 );
 		this.camera.position.z = 5;
 		this.renderer = new THREE.WebGLRenderer({
-			antialias: true
+			antialias: true,
+			alpha: true
 		});
 		this.renderer.domElement.onmousemove = this._setMouseCoords.bind( this );
 		this.renderer.setSize( this.settings.width, this.settings.height );

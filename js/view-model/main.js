@@ -69,6 +69,7 @@ define(function( require ){
 		}
 
 		var hsv = this.color.toHsv();
+		this._hsvCone.setColor( hsv );
 		this.hsvHue( parseFloat( hsv.h.toFixed( 2 ) ) );
 		this.hsvSaturation( this._format( hsv.s ) );
 		this.hsvValue( this._format( hsv.v ) );

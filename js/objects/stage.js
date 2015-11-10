@@ -30,9 +30,9 @@ define(function( require ){
 	};
 
 	Stage.prototype._setMouseCoords = function( event ) {
-		this.camera.position.x = -3 + ( 6 * ( event.layerX / this.settings.width ) );
-		this.camera.position.y = 3 - ( 6 * ( event.layerY / this.settings.height ) );
-		this.camera.lookAt(  new THREE.Vector3( 0, 0, 0 ) );
+		// this.camera.position.x = -3 + ( 6 * ( event.layerX / this.settings.width ) );
+		// this.camera.position.y = 3 - ( 6 * ( event.layerY / this.settings.height ) );
+		// this.camera.lookAt(  new THREE.Vector3( 0, 0, 0 ) );
 	};
 
 	return Stage;

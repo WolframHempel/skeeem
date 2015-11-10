@@ -32,8 +32,8 @@ define(function( require ){
 			rings: 30,
 			pointDensity: 30,
 			innerRingDensity: 10,
-			gapStart: Math.PI * 1.75,
-			gapEnd: Math.PI * 2,
+			gapStart: Math.PI * 0,
+			gapEnd: Math.PI * 0.25,
 			colorSpace: colorSpace
 		});
 	};

@@ -19,6 +19,20 @@ define(function( require ){
 		this.render();		
 	}
 
+	Stage.prototype.toScreenCoords = function ( position, camera, jqdiv ) {
+
+		var pos = position.clone();
+		projScreenMat = new THREE.Matrix4();
+		projScreenMat.multiply( this.camera.projectionMatrix, this.camera.matrixWorldInverse );
+		projScreenMat.multiplyVector3( pos );
+
+		return { 
+			x: ( pos.x + 1 ) * this.settings.width / 2,
+			y: ( - pos.y + 1) * this.settings.height / 2
+		};
+
+	};
+
 	Stage.prototype.add = function( object ) {
 		this.scene.add( object );
 	};

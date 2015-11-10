@@ -10,7 +10,7 @@ define(function( require ){
 		this._stage = new Stage( settings );
 		this._stage.on( 'update', this._update, this );
 		this._geometry = this._createGeometry();
-		this._stage.camera.position.set( PI / -2, PI, 5 );
+		this._stage.camera.position.set( PI, PI, 5 );
 		this._stage.camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 		this._material = new THREE.PointsMaterial({ size: this._settings.pointSize, vertexColors: THREE.VertexColors });
 		this._points = new THREE.Points( this._geometry, this._material );
@@ -20,6 +20,10 @@ define(function( require ){
 		this._spotLight.position.set( 0, 0, 3 );
 		this._stage.add( this._spotLight );
 		this._addLines();
+		this._activeColorIndicator = document.createElement( 'div' );
+		this._activeColorIndicator.className = 'active-color-indicator';
+		this._settings.container.appendChild( this._activeColorIndicator );
+		
 	}
 
 	ColorCone.prototype.setColor = function( colorMap ) {
@@ -37,6 +41,14 @@ define(function( require ){
 
 			this._geometry.colors[ i ] = this._getColor( c[ 0 ], c[ 1 ], hue );
 		}
+
+		var f = colorMap.v || colorMap.l;
+		var y = ( this._settings.coneHeight * f ) - ( this._settings.coneHeight / 2 );
+		var r = this._getRadius( f ) * colorMap.s;
+		var indicatorPosition = this._stage.toScreenCoords( new THREE.Vector3( 0, y, r ) );
+
+		this._activeColorIndicator.style.left = indicatorPosition.x + 'px';
+		this._activeColorIndicator.style.top = indicatorPosition.y + 'px';
 
 		this._geometry.colorsNeedUpdate = true;
 	};
@@ -91,13 +103,8 @@ define(function( require ){
 		for( ring = 0; ring <= rings; ring++ ) {
 			f = ring / rings;
 			y = ( height * f ) - ( height / 2 );
-			if( this._settings.colorSpace === 'HSV' ) {
-				// Cone
-				rOuter = radiusTop * f;
-			} else {
-				// BiCone
-				rOuter = radiusTop * ( 1 - Math.abs( 1 - ( f * 2 ) ) );
-			}
+			rOuter = this._getRadius( f );
+			
 			
 			for( r = rOuter; r > 0; r -= radiusTop / innerRingDensity ) {
 				for( alpha = 0; alpha < PI * 2; alpha += ( PI * 2 ) / ( r * pointDensity ) ) {
@@ -113,6 +120,16 @@ define(function( require ){
 		}
 
 		return geometry;
+	};
+
+	ColorCone.prototype._getRadius = function( f ) {
+		if( this._settings.colorSpace === 'HSV' ) {
+			// Cone
+			return this._settings.radius * f;
+		} else {
+			// BiCone
+			return this._settings.radius * ( 1 - Math.abs( 1 - ( f * 2 ) ) );
+		}
 	};
 
 	ColorCone.prototype._getColor = function( relativeHeight, relativeRadius, alpha ) {

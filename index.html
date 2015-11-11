@@ -9,7 +9,17 @@
 <body>
 
 <div class="current-color" data-bind="style:{ 'background-color': hexValue }"></div>
+<input type="text" data-bind="value: hexValue" />
 <ul class="color-spaces">
+	<li class="rgb">
+		<div class="example vis-container"></div>
+		<h3>Red Green Blue</h3>
+		<ul class="controls">
+			<li data-bind="template: { name: 'range-control', data: { label: 'Red (0-255)', name: 'rgb-red', max: 255, obs: rgbRed } }"></li>
+			<li data-bind="template: { name: 'range-control', data: { label: 'Green (0-255)', name: 'rgb-green', max: 255, obs: rgbGreen } }"></li>
+			<li data-bind="template: { name: 'range-control', data: { label: 'Blue (0-255)', name: 'rgb-blue', max: 255, obs: rgbBlue } }"></li>
+		</ul>
+	</li>
 	<li class="hsv">
 		<div class="example vis-container"></div>
 		<h3>Hue Saturation Value</h3>
@@ -17,6 +27,15 @@
 			<li data-bind="template: { name: 'range-control', data: { label: 'Hue (0-360 degree)', name: 'hsv-hue', max: 360, obs: hsvHue } }"></li>
 			<li data-bind="template: { name: 'range-control', data: { label: 'Saturation (0-100%)', name: 'hsv-saturation', max: 100, obs: hsvSaturation } }"></li>
 			<li data-bind="template: { name: 'range-control', data: { label: 'Value (0-100%)', name: 'hsv-value', max: 100, obs: hsvValue } }"></li>
+		</ul>
+	</li>
+	<li class="hsl">
+		<div class="example vis-container"></div>
+		<h3>Hue Saturation Lightness</h3>
+		<ul class="controls">
+			<li data-bind="template: { name: 'range-control', data: { label: 'Hue (0-360 degree)', name: 'hsl-hue', max: 360, obs: hslHue } }"></li>
+			<li data-bind="template: { name: 'range-control', data: { label: 'Saturation (0-100%)', name: 'hsl-saturation', max: 100, obs: hslSaturation } }"></li>
+			<li data-bind="template: { name: 'range-control', data: { label: 'Lightness (0-100%)', name: 'hsl-value', max: 100, obs: hslLightness } }"></li>
 		</ul>
 	</li>
 </ul>

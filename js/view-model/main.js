@@ -1,6 +1,7 @@
 define(function( require ){
 	var ko = require( 'ko' );
 	var ColorCone = require( '../visualisations/color-cone' );
+	var RgbCube = require( '../visualisations/rgb-cube' );
 	var tinycolor = require( 'tinycolor' );
 	
 	function Main() {
@@ -15,11 +16,28 @@ define(function( require ){
 		this.hslSaturation = this._getObservable( 'hsl' );
 		this.hslLightness = this._getObservable( 'hsl' );
 
+		this.rgbRed = this._getObservable( 'rgb' );
+		this.rgbGreen = this._getObservable( 'rgb' );
+		this.rgbBlue = this._getObservable( 'rgb' );
+
 		this.hexValue = this._getObservable( 'hex' );
 
 		this._hsvCone = this._getColorCone( 'HSV' );
+		this._hslCone = this._getColorCone( 'HSL' );
+		this._rgbCube = this._getRgbCube();
 		this._update( 'initial' );
 	}
+
+	Main.prototype._getRgbCube = function() {
+		return new RgbCube({
+			container:  document.querySelector( '.rgb .example' ),
+			width: 300,
+			height: 300,
+			pointSize: 0.08,
+			side: 2.5,
+			pointsPerSide: 10
+		});
+	};
 
 	Main.prototype._getColorCone = function( colorSpace ) {
 		return new ColorCone({
@@ -67,6 +85,15 @@ define(function( require ){
 				l: this.hslLightness() / 100
 			});
 		}
+		else if( changeSource === 'rgb' ) {
+			this.color = tinycolor({
+				r: this.rgbRed(),
+				g: this.rgbGreen(),
+				b: this.rgbBlue()
+			});
+		} else if( changeSource === 'hex' ) {
+			this.color = tinycolor( this.hexValue() );
+		}
 
 		var hsv = this.color.toHsv();
 		this._hsvCone.setColor( hsv );
@@ -75,9 +102,16 @@ define(function( require ){
 		this.hsvValue( this._format( hsv.v ) );
 
 		var hsl = this.color.toHsl();
+		this._hslCone.setColor( hsl );
 		this.hslHue( parseFloat( hsl.h.toFixed( 2 ) ) );
 		this.hslSaturation( this._format( hsl.s ) );
 		this.hslLightness( this._format( hsl.l ) );
+
+		var rgb = this.color.toRgb();
+		this._rgbCube.setColor( rgb );
+		this.rgbRed( rgb.r );
+		this.rgbGreen( rgb.g );
+		this.rgbBlue( rgb.b );
 
 		this.hexValue( this.color.toHexString() );
 

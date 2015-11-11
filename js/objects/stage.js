@@ -22,10 +22,9 @@ define(function( require ){
 	Stage.prototype.toScreenCoords = function ( position, camera, jqdiv ) {
 
 		var pos = position.clone();
-		projScreenMat = new THREE.Matrix4();
-		projScreenMat.multiply( this.camera.projectionMatrix, this.camera.matrixWorldInverse );
-		projScreenMat.multiplyVector3( pos );
-
+		projScreenMatrix = new THREE.Matrix4();
+		projScreenMatrix.multiplyMatrices( this.camera.projectionMatrix, this.camera.matrixWorldInverse );
+		pos.applyProjection( projScreenMatrix );
 		return { 
 			x: ( pos.x + 1 ) * this.settings.width / 2,
 			y: ( - pos.y + 1) * this.settings.height / 2

@@ -13,6 +13,11 @@ body{
 	height: 100px;
 }
 
+.color-spaces > li{
+	width: 300px;
+	float: left;
+}
+
 .vis-container{
 	position: relative;
 }

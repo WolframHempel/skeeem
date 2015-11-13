@@ -33,37 +33,58 @@ define(function( require ){
 
 		for( i = 0; i < this._geometry.vertices.length; i++ ) {
 			v = this._geometry.vertices[ i ];
-			if( v.x > cX && v.y > cY && v.z > cZ ) {
-				this._geometry.colors[ i ].opacity = 0;
+			if( v.x < cX || v.y < cY || v.origZ < cZ ) {
+				this._geometry.vertices[ i ].z = this._geometry.vertices[ i ].origZ;
 			} else {
-				this._geometry.colors[ i ].opacity = 1;
+				this._geometry.vertices[ i ].z = 999;
 			}
 		}
-	};
-
-
-	RgbCube.prototype._getMaterial = function() {
-		//http://jsfiddle.net/8mrH7/195/
-		var vertexShader = 'attribute float alpha;varying float vAlpha;void main() {vAlpha = alpha;vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );gl_PointSize = 8.0;gl_Position = projectionMatrix * mvPosition;}';
-		var fragmentShader = 'uniform vec3 color;varying float vAlpha;void main() {gl_FragColor = vec4( color, vAlpha );}';
-
 		
+		var indicatorPosition = this._stage.toScreenCoords( new THREE.Vector3( cX, cY, cZ ) );
+
+		this._activeColorIndicator.style.left = indicatorPosition.x + 'px';
+		this._activeColorIndicator.style.top = indicatorPosition.y + 'px';
+
+		this._geometry.verticesNeedUpdate = true;
 	};
+
 
 	RgbCube.prototype._addLines = function() {
+		var geometry;
+		var s = this._settings.side;
+		var material = new THREE.LineBasicMaterial({ color: 0xffffff });
+		material.opacity = 0.6;
+		material.transparent = true;
 
+		geometry =  new THREE.Geometry();
+		geometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
+		geometry.vertices.push( new THREE.Vector3( 0, 0, s ) );
+		geometry.vertices.push( new THREE.Vector3( 0, s, s ) );
+		geometry.vertices.push( new THREE.Vector3( 0, s, 0 ) );
+		geometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
+		this._stage.add( new THREE.Line( geometry, material ) );
+
+		geometry =  new THREE.Geometry();
+		geometry.vertices.push( new THREE.Vector3( s, 0, 0 ) );
+		geometry.vertices.push( new THREE.Vector3( s, 0, s ) );
+		geometry.vertices.push( new THREE.Vector3( s, s, s ) );
+		geometry.vertices.push( new THREE.Vector3( s, s, 0 ) );
+		geometry.vertices.push( new THREE.Vector3( s, 0, 0 ) );
+		this._stage.add( new THREE.Line( geometry, material ) );
 	};
 
 	RgbCube.prototype._createGeometry = function() {
 		var geometry = new THREE.Geometry();
 		var side = this._settings.side;
 		var pointsPerSide = this._settings.pointsPerSide;
-		var r, g, b, x, y, z;
+		var r, g, b, x, y, z, vector;
 
 		for( x = 0; x < side; x += side / pointsPerSide )
 		for( y = 0; y < side; y += side / pointsPerSide )
 		for( z = 0; z < side; z += side / pointsPerSide ) {
-			geometry.vertices.push( new THREE.Vector3( x, y, z ) );
+			vector = new THREE.Vector3( x, y, z );
+			vector.origZ = z;
+			geometry.vertices.push( vector );
 			geometry.colors.push( new THREE.Color( x / side, y / side, z / side ) );	
 		}
 

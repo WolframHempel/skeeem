@@ -35,7 +35,7 @@ define(function( require ){
 			height: 300,
 			pointSize: 0.08,
 			side: 2.5,
-			pointsPerSide: 10
+			pointsPerSide: 20
 		});
 	};
 

@@ -2,6 +2,7 @@ define(function( require ){
 	var three = require( 'three' );
 	var Stage = require( '../objects/stage' );
 	var tinycolor = require( 'tinycolor' );
+	var getLine = require( '../utils/line-segment-factory' );
 	var PI = Math.PI;
 
 	function RgbCube( settings ) {
@@ -12,6 +13,8 @@ define(function( require ){
 		this._material = new THREE.PointsMaterial({ size: this._settings.pointSize, vertexColors: THREE.VertexColors });
 		this._points = new THREE.Points( this._geometry, this._material );
 		this._stage.add( this._points );
+		this._lineVertices = {};
+		this._lineGeometry = null;
 		//this._stage.add( new THREE.Mesh( this._createGeometry(), new THREE.MeshLambertMaterial({ wireframe: true })));
 		this._stage.add( new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 ) );
 		this._spotLight = new THREE.SpotLight( 0xffffff);
@@ -28,7 +31,7 @@ define(function( require ){
 		var cX = ( rgb.r / 255 ) * side;
 		var cY = ( rgb.g / 255 ) * side;
 		var cZ = ( rgb.b / 255 ) * side;
-		var i, v;
+		var i, v, indicatorPosition;
 
 		for( i = 0; i < this._geometry.vertices.length; i++ ) {
 			v = this._geometry.vertices[ i ];
@@ -38,58 +41,97 @@ define(function( require ){
 				this._geometry.vertices[ i ].z = 999;
 			}
 		}
-		
-		var indicatorPosition = this._stage.toScreenCoords( new THREE.Vector3( cX, cY, cZ ) );
+		this._lineVertices.t.fl.x = cX;
+		this._lineVertices.t.fr.z = cZ;
+		this._lineVertices.t.fc.x = cX;
+		this._lineVertices.t.fc.z = cZ;
 
+
+		this._lineVertices.c.b.x = cX;
+		this._lineVertices.c.b.y = cY;
+		this._lineVertices.c.b.z = cZ;
+
+		
+		this._lineVertices.c.r.y = cY;
+		this._lineVertices.c.r.z = cZ;
+
+		this._lineVertices.c.l.x = cX;
+		this._lineVertices.c.l.y = cY;
+
+		this._lineVertices.c.f.y = cY;
+
+		indicatorPosition = this._stage.toScreenCoords( new THREE.Vector3( cX, cY, cZ ) );
 		this._activeColorIndicator.style.left = indicatorPosition.x + 'px';
 		this._activeColorIndicator.style.top = indicatorPosition.y + 'px';
 
 		this._geometry.verticesNeedUpdate = true;
+		this._lineGeometry.verticesNeedUpdate = true;
 	};
 
 
 	RgbCube.prototype._addLines = function() {
-		var geometry;
-		var s = this._settings.side;
+		var s =  this._settings.side;
 		var material = new THREE.LineBasicMaterial({ color: 0xffffff });
-		material.opacity = 0.4;
+		var geometry =  new THREE.Geometry();
+		
+		material.opacity = 0.3;
 		material.transparent = true;
+	
+		var v = { // vertices
+			b: { // bottom
+				b: new THREE.Vector3( 0, 0, 0 ), // back
+				l: new THREE.Vector3( 0, 0, s ), // left
+				r: new THREE.Vector3( s, 0, 0 ), // right
+				f: new THREE.Vector3( s, 0, s ) // front
+			},
+			t: { // bottom
+				b: new THREE.Vector3( 0, s, 0 ), // back
+				l: new THREE.Vector3( 0, s, s ), // left
+				r: new THREE.Vector3( s, s, 0 ), // right
+				fl: new THREE.Vector3( s, s, s ), // front left
+				fr: new THREE.Vector3( s, s, s ), // front right
+				fc: new THREE.Vector3( s, s, s ), // front center
+			},
+			c: { // center
+				b: new THREE.Vector3( s, s, s ), // center point
+				r: new THREE.Vector3( s, s, 0 ), // center right
+				l: new THREE.Vector3( 0, s, s ), // center left
+				f: new THREE.Vector3( s, s, s ), // center front
+			}
+		};
 
-		geometry =  new THREE.Geometry();
-		geometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
-		geometry.vertices.push( new THREE.Vector3( 0, 0, s ) );
-		geometry.vertices.push( new THREE.Vector3( 0, s, s ) );
-		geometry.vertices.push( new THREE.Vector3( 0, s, 0 ) );
-		geometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
-		this._stage.add( new THREE.Line( geometry, material ) );
+		geometry.vertices = [
+			//bottom square
+			v.b.b, v.b.l,
+			v.b.b, v.b.r,
+			v.b.r, v.b.f,
+			v.b.l, v.b.f,
+			v.b.l, v.t.l,
+			v.b.r, v.t.r,
 
-		geometry =  new THREE.Geometry();
-		geometry.vertices.push( new THREE.Vector3( s, 0, 0 ) );
-		geometry.vertices.push( new THREE.Vector3( s, 0, s ) );
-		geometry.vertices.push( new THREE.Vector3( s, s, s ) );
-		geometry.vertices.push( new THREE.Vector3( s, s, 0 ) );
-		geometry.vertices.push( new THREE.Vector3( s, 0, 0 ) );
-		this._stage.add( new THREE.Line( geometry, material ) );
+			//top
+			v.t.b, v.t.l,
+			v.t.b, v.t.r,
+			v.t.r, v.t.fr,
+			v.t.l, v.t.fl,
+			v.t.fl, v.t.fc,
+			v.t.fr, v.t.fc,
 
-		geometry =  new THREE.Geometry();
-		geometry.vertices.push( new THREE.Vector3( s, 0, 0 ) );
-		geometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
-		this._stage.add( new THREE.Line( geometry, material ) );
+			//center
+			v.t.fc, v.c.b,
+			v.c.b, v.c.r,
+			v.c.b, v.c.l,
+			v.c.r, v.t.fr,
+			v.c.l, v.t.fl,
+			v.c.l, v.c.f,
+			v.c.r, v.c.f,
+			v.c.f, v.b.f
+		];
 
-		geometry =  new THREE.Geometry();
-		geometry.vertices.push( new THREE.Vector3( 0, 0, s ) );
-		geometry.vertices.push( new THREE.Vector3( s, 0, s ) );
-		this._stage.add( new THREE.Line( geometry, material ) );
+		this._lineVertices = v;
+		this._lineGeometry = geometry;
 
-		geometry =  new THREE.Geometry();
-		geometry.vertices.push( new THREE.Vector3( 0, s, s ) );
-		geometry.vertices.push( new THREE.Vector3( s, s, s ) );
-		this._stage.add( new THREE.Line( geometry, material ) );
-
-		geometry =  new THREE.Geometry();
-		geometry.vertices.push( new THREE.Vector3( 0, s, 0 ) );
-		geometry.vertices.push( new THREE.Vector3( s, s, 0 ) );
-		this._stage.add( new THREE.Line( geometry, material ) );
+		this._stage.add( new THREE.LineSegments( geometry, material ) );
 	};
 
 	RgbCube.prototype._createGeometry = function() {

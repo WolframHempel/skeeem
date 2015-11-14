@@ -1,4 +1,6 @@
 define(function( require ){
+	'use strict';
+
 	var three = require( 'three' );
 	var Stage = require( '../objects/stage' );
 	var tinycolor = require( 'tinycolor' );
@@ -8,9 +10,10 @@ define(function( require ){
 		this._settings = settings;
 		this._relativeCoords = [];
 		this._isHsv = this._settings.colorSpace === 'HSV';
+		this._vertices = null;
 		this._stage = new Stage( settings );
-		this._stage.on( 'update', this._update, this );
 		this._geometry = this._createGeometry();
+		this._connectingLineGeometry = null;
 		this._stage.setCameraPosition( PI, PI, 5 );
 		this._material = new THREE.PointsMaterial({ size: this._settings.pointSize, vertexColors: THREE.VertexColors });
 		this._points = new THREE.Points( this._geometry, this._material );
@@ -23,11 +26,10 @@ define(function( require ){
 		this._activeColorIndicator = document.createElement( 'div' );
 		this._activeColorIndicator.className = 'active-color-indicator';
 		this._settings.container.appendChild( this._activeColorIndicator );
-		
 	}
 
 	ColorCone.prototype.setColor = function( colorMap ) {
-		var i, c, f, y, r, hue, indicatorPosition, hueOffset = ( colorMap.h / 360 ) * PI * 2;
+		var i, c, f, y, r, a, hue, indicatorPosition, hueOffset = ( colorMap.h / 360 ) * PI * 2;
 
 		for( i = 0; i < this._relativeCoords.length; i++ ) {
 
@@ -58,41 +60,88 @@ define(function( require ){
 		this._activeColorIndicator.style.left = indicatorPosition.x + 'px';
 		this._activeColorIndicator.style.top = indicatorPosition.y + 'px';
 
+		r = this._getRadius( f );
 		
+		for( i = 0; i < this._circleLine.vertices.length; i++ ) {
+			a = ( ( i / this._circleLine.vertices.length ) * Math.PI * 0.5 ) + ( Math.PI * 1.5 );
+			this._circleLine.vertices[ i ].x = r * Math.sin( a );
+			this._circleLine.vertices[ i ].y = y;
+			this._circleLine.vertices[ i ].z = r * Math.cos( a );
+		}
+
+		this._vertices.c.a.y = y;
+		this._vertices.c.a.z = r;
+
+		this._vertices.c.b.x = r * -1;
+		this._vertices.c.b.y = y;
+
+		this._vertices.c.c.y = y;
+
+		this._circleLine.verticesNeedUpdate = true;
+		this._connectingLineGeometry.verticesNeedUpdate = true;
 	};
 
 	ColorCone.prototype._addLines = function() {
-		var geometry =  new THREE.Geometry();
+		this._circleLine =  new THREE.Geometry();
+		this._connectingLineGeometry = new THREE.Geometry();
+		var radiusGeometry = new THREE.Geometry();
+		
 		var y1 = this._settings.coneHeight * -0.5;
 		var y2 = this._settings.coneHeight * 0.5;
-		var xStart = this._settings.radius * Math.sin( this._settings.gapStart );
-		var yStart = this._settings.radius * Math.cos( this._settings.gapStart );
-		var xEnd = this._settings.radius * Math.sin( this._settings.gapEnd );
-		var yEnd = this._settings.radius * Math.cos( this._settings.gapEnd );
+		
+		var xA = this._settings.radius * Math.sin( this._settings.gapEnd );
+		var yA = this._settings.radius * Math.cos( this._settings.gapEnd );
+
+		var xB = this._settings.radius * -1;
+		var yB = 0;
+		
 		var material = new THREE.LineBasicMaterial({ color: 0xffffff });
 		var yBase = this._isHsv ? y2: 0;
-		var a;
+		var a, v;
 		
-		material.opacity = 0.4;
+		material.opacity = 0.3;
 		material.transparent = true;
 
-		for( a = this._settings.gapEnd; a < this._settings.gapStart + 2 * PI; a += 0.1 ) {
-			geometry.vertices.push( new THREE.Vector3( 
+		for( a = this._settings.gapEnd; a < Math.PI * 1.5; a += 0.1 ) {
+			this._circleLine.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
+			radiusGeometry.vertices.push( new THREE.Vector3( 
 				this._settings.radius * Math.sin( a ), 
 				yBase,
 				this._settings.radius * Math.cos( a ) 
 			));
 		}
 
-		geometry.vertices.push( new THREE.Vector3( xStart, yBase, yStart ) );
-		geometry.vertices.push( new THREE.Vector3( 0, y1, 0 ) );
-		geometry.vertices.push( new THREE.Vector3( xEnd, yBase, yEnd ) );
-		geometry.vertices.push( new THREE.Vector3( 0, y2, 0 ) );
-		geometry.vertices.push( new THREE.Vector3( 0, y1, 0 ) );
-		geometry.vertices.push( new THREE.Vector3( xStart, yBase, yStart ) );
-		geometry.vertices.push( new THREE.Vector3( 0, y2, 0 ) );
+		v = {
+			t: {
+				a: new THREE.Vector3( xA, yBase, yA ),
+				b: new THREE.Vector3( xB, yBase, yB ),
+				c: new THREE.Vector3( 0, y2, 0 )
+			},
+			b: new THREE.Vector3( 0, y1, 0 ), // bottom point
+			c: {
+				a: new THREE.Vector3( 0, 0, 0 ),
+				b: new THREE.Vector3( 0, 0, 0 ),
+				c: new THREE.Vector3( 0, 0, 0 ),
+			}
+		};
 
-		this._stage.add( new THREE.Line( geometry, material ) );
+		this._connectingLineGeometry.vertices = [
+			//bottom triangle
+			v.b, v.c.a,
+			v.c.a, v.c.c,
+			v.c.b, v.c.c,
+			v.b, v.t.c,
+
+			//top
+			v.t.a, v.t.c,
+			v.t.b, v.t.c,
+			v.c.b, v.t.b,
+			v.b, v.t.a
+		];
+		this._vertices = v;
+		this._stage.add( new THREE.LineSegments( this._connectingLineGeometry, material ) );
+		this._stage.add( new THREE.Line( this._circleLine, material ) );
+		this._stage.add( new THREE.Line( radiusGeometry, material ) );
 	};
 
 	ColorCone.prototype._createGeometry = function() {
@@ -103,17 +152,13 @@ define(function( require ){
 		var innerRingDensity = this._settings.innerRingDensity;
 		var alphaGapStart = this._settings.gapStart;
 		var alphaGapEnd = this._settings.gapEnd;
-		var rOuter;
-		var vertex;
-		var ring;
-		var f, r, x, y, z, alpha;
 		var geometry = new THREE.Geometry();
+		var f, r, x, y, z, alpha, rOuter, vertex, ring;
 
 		for( ring = 0; ring <= rings; ring++ ) {
 			f = ring / rings;
 			y = ( height * f ) - ( height / 2 );
 			rOuter = this._getRadius( f );
-			
 			
 			for( r = rOuter; r > 0; r -= radiusTop / innerRingDensity ) {
 				for( alpha = 0; alpha < PI * 2; alpha += ( PI * 2 ) / ( r * pointDensity ) ) {
@@ -135,11 +180,9 @@ define(function( require ){
 
 	ColorCone.prototype._getRadius = function( f ) {
 		if( this._isHsv ) {
-			// Cone
-			return this._settings.radius * f;
+			return this._settings.radius * f; // Cone
 		} else {
-			// BiCone
-			return this._settings.radius * ( 1 - Math.abs( 1 - ( f * 2 ) ) );
+			return this._settings.radius * ( 1 - Math.abs( 1 - ( f * 2 ) ) ); // BiCone
 		}
 	};
 
@@ -156,10 +199,6 @@ define(function( require ){
 
 		rgb = tinycolor( colorMap ).toRgb();
 		return new THREE.Color( rgb.r / 255, rgb.g / 255, rgb.b / 255 );
-	};
-
-	ColorCone.prototype._update = function() {
-
 	};
 
 	return ColorCone;

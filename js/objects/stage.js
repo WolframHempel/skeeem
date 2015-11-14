@@ -20,7 +20,6 @@ define(function( require ){
 	}
 
 	Stage.prototype.toScreenCoords = function ( position, camera, jqdiv ) {
-
 		var pos = position.clone();
 		projScreenMatrix = new THREE.Matrix4();
 		projScreenMatrix.multiplyMatrices( this.camera.projectionMatrix, this.camera.matrixWorldInverse );
@@ -30,6 +29,11 @@ define(function( require ){
 			y: ( - pos.y + 1) * this.settings.height / 2
 		};
 
+	};
+
+	Stage.prototype.setCameraPosition = function( x, y, z ) {
+		this.camera.position.set( x, y, z );
+		this.camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
 	};
 
 	Stage.prototype.add = function( object ) {

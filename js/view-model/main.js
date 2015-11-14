@@ -26,6 +26,7 @@ define(function( require ){
 		this._hslCone = this._getColorCone( 'HSL' );
 		this._rgbCube = this._getRgbCube();
 		this._update( 'initial' );
+		xxx= this;
 	}
 
 	Main.prototype._getRgbCube = function() {
@@ -47,9 +48,9 @@ define(function( require ){
 			pointSize: 0.08,
 			radius: 3,
 			coneHeight: 4,
-			rings: 30,
+			rings: 50,
 			pointDensity: 30,
-			innerRingDensity: 10,
+			innerRingDensity: 12,
 			gapStart: Math.PI * 0,
 			gapEnd: Math.PI * 0.25,
 			colorSpace: colorSpace

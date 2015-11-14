@@ -8,8 +8,7 @@ define(function( require ){
 		this._settings = settings;
 		this._stage = new Stage( settings );
 		this._geometry = this._createGeometry();
-		this._stage.camera.position.set( PI, PI, 5 );
-		this._stage.camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
+		this._stage.setCameraPosition( PI, PI, 5 );
 		this._material = new THREE.PointsMaterial({ size: this._settings.pointSize, vertexColors: THREE.VertexColors });
 		this._points = new THREE.Points( this._geometry, this._material );
 		this._stage.add( this._points );
@@ -53,7 +52,7 @@ define(function( require ){
 		var geometry;
 		var s = this._settings.side;
 		var material = new THREE.LineBasicMaterial({ color: 0xffffff });
-		material.opacity = 0.6;
+		material.opacity = 0.4;
 		material.transparent = true;
 
 		geometry =  new THREE.Geometry();
@@ -70,6 +69,26 @@ define(function( require ){
 		geometry.vertices.push( new THREE.Vector3( s, s, s ) );
 		geometry.vertices.push( new THREE.Vector3( s, s, 0 ) );
 		geometry.vertices.push( new THREE.Vector3( s, 0, 0 ) );
+		this._stage.add( new THREE.Line( geometry, material ) );
+
+		geometry =  new THREE.Geometry();
+		geometry.vertices.push( new THREE.Vector3( s, 0, 0 ) );
+		geometry.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
+		this._stage.add( new THREE.Line( geometry, material ) );
+
+		geometry =  new THREE.Geometry();
+		geometry.vertices.push( new THREE.Vector3( 0, 0, s ) );
+		geometry.vertices.push( new THREE.Vector3( s, 0, s ) );
+		this._stage.add( new THREE.Line( geometry, material ) );
+
+		geometry =  new THREE.Geometry();
+		geometry.vertices.push( new THREE.Vector3( 0, s, s ) );
+		geometry.vertices.push( new THREE.Vector3( s, s, s ) );
+		this._stage.add( new THREE.Line( geometry, material ) );
+
+		geometry =  new THREE.Geometry();
+		geometry.vertices.push( new THREE.Vector3( 0, s, 0 ) );
+		geometry.vertices.push( new THREE.Vector3( s, s, 0 ) );
 		this._stage.add( new THREE.Line( geometry, material ) );
 	};
 

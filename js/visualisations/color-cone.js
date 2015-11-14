@@ -7,11 +7,11 @@ define(function( require ){
 	function ColorCone( settings ) {
 		this._settings = settings;
 		this._relativeCoords = [];
+		this._isHsv = this._settings.colorSpace === 'HSV';
 		this._stage = new Stage( settings );
 		this._stage.on( 'update', this._update, this );
 		this._geometry = this._createGeometry();
-		this._stage.camera.position.set( PI, PI, 5 );
-		this._stage.camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
+		this._stage.setCameraPosition( PI, PI, 5 );
 		this._material = new THREE.PointsMaterial({ size: this._settings.pointSize, vertexColors: THREE.VertexColors });
 		this._points = new THREE.Points( this._geometry, this._material );
 		this._stage.add( this._points );
@@ -27,11 +27,11 @@ define(function( require ){
 	}
 
 	ColorCone.prototype.setColor = function( colorMap ) {
-		var i, c, hue, hueOffset;
+		var i, c, f, y, r, hue, indicatorPosition, hueOffset = ( colorMap.h / 360 ) * PI * 2;
 
 		for( i = 0; i < this._relativeCoords.length; i++ ) {
-			c = this._relativeCoords[ i ];
-			hueOffset = ( colorMap.h / 360 ) * PI * 2;
+
+			c = this._relativeCoords[ i ];			
 
 			if( ( c[ 2 ] + hueOffset ) > 2 * PI ) {
 				hue = ( c[ 2 ] + hueOffset ) - 2 * PI;
@@ -39,18 +39,26 @@ define(function( require ){
 				hue = c[ 2 ] + hueOffset;
 			}
 
+			if( c[ 0 ] > ( this._isHsv ? colorMap.v : colorMap.l ) && c[ 2 ] > Math.PI * 1.5 ) {
+				this._geometry.vertices[ i ].z = 999;
+			} else {
+				this._geometry.vertices[ i ].z = this._geometry.vertices[ i ].origZ;
+			}
+
 			this._geometry.colors[ i ] = this._getColor( c[ 0 ], c[ 1 ], hue );
 		}
-
-		var f = colorMap.v || colorMap.l;
-		var y = ( this._settings.coneHeight * f ) - ( this._settings.coneHeight / 2 );
-		var r = this._getRadius( f ) * colorMap.s;
-		var indicatorPosition = this._stage.toScreenCoords( new THREE.Vector3( 0, y, r ) );
+		this._geometry.verticesNeedUpdate = true;
+		this._geometry.colorsNeedUpdate = true;
+		
+		f = colorMap.v || colorMap.l;
+		y = ( this._settings.coneHeight * f ) - ( this._settings.coneHeight / 2 );
+		r = this._getRadius( f ) * colorMap.s;
+		indicatorPosition = this._stage.toScreenCoords( new THREE.Vector3( 0, y, r ) );
 
 		this._activeColorIndicator.style.left = indicatorPosition.x + 'px';
 		this._activeColorIndicator.style.top = indicatorPosition.y + 'px';
 
-		this._geometry.colorsNeedUpdate = true;
+		
 	};
 
 	ColorCone.prototype._addLines = function() {
@@ -62,10 +70,10 @@ define(function( require ){
 		var xEnd = this._settings.radius * Math.sin( this._settings.gapEnd );
 		var yEnd = this._settings.radius * Math.cos( this._settings.gapEnd );
 		var material = new THREE.LineBasicMaterial({ color: 0xffffff });
-		var yBase = this._settings.colorSpace === 'HSV' ? y2: 0;
+		var yBase = this._isHsv ? y2: 0;
 		var a;
 		
-		material.opacity = 0.6;
+		material.opacity = 0.4;
 		material.transparent = true;
 
 		for( a = this._settings.gapEnd; a < this._settings.gapStart + 2 * PI; a += 0.1 ) {
@@ -96,6 +104,7 @@ define(function( require ){
 		var alphaGapStart = this._settings.gapStart;
 		var alphaGapEnd = this._settings.gapEnd;
 		var rOuter;
+		var vertex;
 		var ring;
 		var f, r, x, y, z, alpha;
 		var geometry = new THREE.Geometry();
@@ -111,8 +120,10 @@ define(function( require ){
 					if( alpha < alphaGapStart || alpha > alphaGapEnd ) {
 						x = Math.sin( alpha ) * r;
 						z = Math.cos( alpha ) * r;
-						geometry.vertices.push( new THREE.Vector3( x, y, z ) );
-						this._relativeCoords.push([ f, r / radiusTop, alpha ]);
+						vertex = new THREE.Vector3( x, y, z );
+						vertex.origZ = z;
+						geometry.vertices.push( vertex );
+						this._relativeCoords.push([ f, r / rOuter, alpha ]);
 						geometry.colors.push( this._getColor( f, r / radiusTop, alpha ) );
 					}
 				}
@@ -123,7 +134,7 @@ define(function( require ){
 	};
 
 	ColorCone.prototype._getRadius = function( f ) {
-		if( this._settings.colorSpace === 'HSV' ) {
+		if( this._isHsv ) {
 			// Cone
 			return this._settings.radius * f;
 		} else {
@@ -137,7 +148,12 @@ define(function( require ){
 		var rgb;
 		var colorMap = { h: deg, s: 100 * relativeRadius };
 
-		colorMap[ this._settings.colorSpace === 'HSV' ? 'v' : 'l' ] = relativeHeight * 100;
+		if( this._isHsv ) {
+			colorMap.v = relativeHeight * 100;
+		} else {
+			colorMap.l = relativeHeight * 100;
+		}
+
 		rgb = tinycolor( colorMap ).toRgb();
 		return new THREE.Color( rgb.r / 255, rgb.g / 255, rgb.b / 255 );
 	};

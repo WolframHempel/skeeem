@@ -2,6 +2,7 @@ define(function( require ){
 	var ko = require( 'ko' );
 	var ColorCone = require( '../visualisations/color-cone' );
 	var RgbCube = require( '../visualisations/rgb-cube' );
+	var Scheme3D = require( '../visualisations/scheme-3d' );
 	var tinycolor = require( 'tinycolor' );
 	
 	function Main() {
@@ -25,8 +26,10 @@ define(function( require ){
 		this._hsvCone = this._getColorCone( 'HSV' );
 		this._hslCone = this._getColorCone( 'HSL' );
 		this._rgbCube = this._getRgbCube();
-		this._update( 'initial' );
-		xxx= this;
+
+		this._scheme3D = this._getScheme3D();
+
+		setTimeout( this._update.bind( this, 'initial' ), 10 );
 	}
 
 	Main.prototype._getRgbCube = function() {
@@ -37,6 +40,14 @@ define(function( require ){
 			pointSize: 0.08,
 			side: 2.5,
 			pointsPerSide: 20
+		});
+	};
+
+	Main.prototype._getScheme3D = function() {
+		return new Scheme3D({
+			container:  document.querySelector( '.schemes' ),
+			width: 1000,
+			height: 400,
 		});
 	};
 
@@ -70,7 +81,8 @@ define(function( require ){
 
 		this._isUpdating = true;
 		if( changeSource === 'initial' ) {
-			this.color = tinycolor({ r: 66, g: 33, b: 99 });
+			//this.color = tinycolor({ r: 66, g: 33, b: 99 });
+			this.color = tinycolor({ r: 189, g: 163, b: 163 });
 		}
 		else if( changeSource === 'hsv' ) {
 			this.color = tinycolor({

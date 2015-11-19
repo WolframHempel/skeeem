@@ -12,7 +12,7 @@ define(function( require ){
 		this._createGeometries();
 		this._stage.camera.position.x = 0.1;
 		this._stage.camera.position.y = -0.05;
-		this._stage.camera.position.z = 0.2;
+		this._stage.camera.position.z = 0.23;
 
 		this._stage.camera.rotation.z = 0.1;
 

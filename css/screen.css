@@ -1,21 +1,59 @@
 *{
 	margin: 0;
-	padding: : 0;
+	padding: 0;
 	list-style-type: none;
+	font: 12px/16px 'Open Sans', sans-serif;
+	box-sizing: border-box;
 }
 
 body{
 	background-color: #000;
 }
 
-.current-color{
-	width: 400px;
-	height: 100px;
+.wrapper{
+	width: 1020px;
+	margin: 20px auto;
 }
 
+/******************
+* Current Scheme
+******************/
+.current-scheme li{
+	float: left;
+    width: 200px;
+    font-size: 10px;
+    margin: 0;
+    cursor: pointer;
+    color: #fff;
+    padding-bottom: 2px;
+    border-bottom-width: 2px;
+    border-bottom-style: solid;
+}
+
+.current-scheme li:hover,
+.current-scheme li.selected{
+	/*border-bottom: 2px solid #fff;*/
+}
+
+.color-spaces{
+	clear: both;
+}
 .color-spaces > li{
 	width: 300px;
+	margin: 0 20px;
 	float: left;
+}
+
+.controls li{
+	padding: 0 20px;
+}
+
+.controls li label{
+	display: block;
+	color: #CCC;
+	font-size: 10px;
+	font-style: italic;
+	font-family: 'PT Serif', serif;
 }
 
 .vis-container{
@@ -32,4 +70,61 @@ body{
 	z-index: 1;
 	left: 50px;
 	top: 50px;
+}
+
+input[type=range]{
+	width: 200px;
+    -webkit-appearance: none;
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+    width: 200px;
+    height: 2px;
+    background: #fff;
+    border: none;
+}
+
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    border: none;
+    height: 10px;
+    width: 10px;
+    border-radius: 50%;
+    background: #000;
+    border: 2px solid #fff;
+    margin-top: -4px;
+}
+
+input[type=range]:focus {
+    outline: none;
+}
+
+input[type=range]:focus::-webkit-slider-runnable-track {
+    background: #ccc;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+.for-range{
+	background: none;
+    border: none;
+    border-bottom: 1px solid #000;
+    transition: all 400ms ease;
+    width: 35px;
+    color: #fff;
+    font-size: 12px;
+    padding-bottom: 3px;
+    cursor: text;
+    outline: none;
+}
+
+.for-range:hover,
+.for-range:active,
+.for-range:focus{
+	background: #333;
+	border-bottom-color: #666;
 }

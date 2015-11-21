@@ -27,6 +27,7 @@ define(function( require ){
 		var material, geometry, i;
 
 		for( i = 0; i < data.length; i++ ) {
+			//this._materials[ i ] = new THREE.MeshPhongMaterial( { color: 0xffffff } );
 			this._materials[ i ] = new THREE.MeshPhongMaterial( { color: 0xffffff } );
 			geometry = this._loader.parse( data[ i ] ).geometry;
 			this._stage.add( new THREE.Mesh( geometry, this._materials[ i ] ) );

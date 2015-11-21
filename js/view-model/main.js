@@ -1,5 +1,6 @@
 define(function( require ){
 	var ko = require( 'ko' );
+	var ColorScheme = require( './color-scheme' );
 	var ColorCone = require( '../visualisations/color-cone' );
 	var RgbCube = require( '../visualisations/rgb-cube' );
 	var Scheme3D = require( '../visualisations/scheme-3d' );
@@ -20,6 +21,7 @@ define(function( require ){
 		this.rgbRed = this._getObservable( 'rgb' );
 		this.rgbGreen = this._getObservable( 'rgb' );
 		this.rgbBlue = this._getObservable( 'rgb' );
+		this.colorScheme = new ColorScheme();
 
 		this.hexValue = this._getObservable( 'hex' );
 

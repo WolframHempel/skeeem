@@ -6,21 +6,37 @@
 	<link rel="stylesheet" type="text/css" href="css/screen.css" />
 	<script type="text/javascript" data-main="js/start.js" src="bower_components/requirejs/require.js"></script>
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.css">
 	<link href='https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
 </head>
 <body>
 <div class="wrapper">
+	<header>
+		<h1>sk<em>EEE</em>m</h1>
+		<span>colorschemes</span>
+	</header>
+	<ul class="scheme-dimensions">
+		<li class="selected">3D</li>
+		<li>2D</li>
+		<li>1D</li>
+	</ul>
 	<div class="schemes"></div>
 	<!--
 	<div class="current-color" data-bind="style:{ 'background-color': hexValue }"></div>
 	<input type="text" data-bind="value: hexValue" />
 	-->
-	<ul class="current-scheme">
-		<li style="border-color: #C326F3">#C326F3</li>
-		<li style="border-color: #23FA33" class="selected">#23FA33</li>
-		<li style="border-color: #46A286">#46A286</li>
-		<li style="border-color: #345299">#345299</li>
-		<li style="border-color: #239944">#239944</li>
+	<div class="add-color fa fa-plus" data-bind="click: colorScheme.add.bind( colorScheme )"></div> 
+	<ul class="current-scheme" data-bind="foreach: colorScheme.colors">
+		<li data-bind="style:{ 'border-color': hex, width: liWidth }, css:{ dark: isDark }">
+			<div class="inner" data-bind="style:{ 'background-color': hex }">
+				<div class="bg"></div>
+				<i data-bind="click:remove" class="fa fa-minus" ></i>
+				<span data-bind="text: hex"></span>
+				<span data-bind="text: rgb"></span>
+				<span data-bind="text: hsv"></span>
+				<span data-bind="text: hsl"></span>
+			</div>
+		</li>
 	</ul>
 	<ul class="color-spaces">
 		<li class="rgb">
@@ -51,6 +67,15 @@
 			</ul>
 		</li>
 	</ul>
+	<footer>
+		<div class="right">
+			<a href="https://twitter.com/jskurseberlin"><i class="fa fa-twitter"></i>@jskurseberlin</a>
+			<a href="#"><i class="fa fa-info"></i>info</a>
+		</div>
+		<div class="left">
+			A <a href="http://javascript-kurse-berlin.de/">JavaScript Kurse Berlin</a> Experiment.
+		</div>
+	</footer>
 </div>
 <template id="range-control">
 	<label data-bind="attr:{ for: name }, text: label"></label>

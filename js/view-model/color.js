@@ -7,28 +7,35 @@ define(function( require ){
 		this.hex = ko.observable();
 		this.hsv = ko.observable();
 		this.hsl = ko.observable();
+		this.isSelected = ko.observable( false );
 		this.isDark = ko.observable( false );
 		this.liWidth = colorScheme.liWidth;
-
+		this.color = null;
 		this._colorScheme = colorScheme;
-		this._color = null;
+		
 	}
+
+	Color.prototype.getArray = function() {
+		var rgb = this.color.toRgb();
+		return [ rgb.r, rgb.g, rgb.b ];
+	};
+	
+	Color.prototype.select = function() {
+		this._colorScheme.select( this );
+	};
 
 	Color.prototype.remove = function() {
 		this._colorScheme.remove( this );
 	};
 
 	Color.prototype.set = function( tinyColor ) {
-		this._color = tinyColor;
+		this.color = tinyColor;
 		this.rgb( tinyColor.toRgbString() );
 		this.hex( tinyColor.toHexString().toUpperCase() );
 		this.hsv( tinyColor.toHsvString() );
 		this.hsl( tinyColor.toHslString() );
-
-		var rgb = tinyColor.toRgb();
-		var sum = rgb.r + rgb.g + rgb.b;
-
-		this.isDark( sum < 382.5 );
+		this.isDark( tinyColor.toHsl().l < 0.4 );
+		this._colorScheme.emit( 'update' );
 	};
 
 	return Color;

@@ -10,11 +10,11 @@
 	<link href='https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
 </head>
 <body>
+<header>
+	<h1>sk<em>EEE</em>m</h1>
+	<span>colorschemes</span>
+</header>
 <div class="wrapper">
-	<header>
-		<h1>sk<em>EEE</em>m</h1>
-		<span>colorschemes</span>
-	</header>
 	<ul class="scheme-dimensions">
 		<li class="selected">3D</li>
 		<li>2D</li>
@@ -25,12 +25,12 @@
 	<div class="current-color" data-bind="style:{ 'background-color': hexValue }"></div>
 	<input type="text" data-bind="value: hexValue" />
 	-->
-	<div class="add-color fa fa-plus" data-bind="click: colorScheme.add.bind( colorScheme )"></div> 
+	<div class="add-color" data-bind="click: colorScheme.add.bind( colorScheme )">+</div> 
 	<ul class="current-scheme" data-bind="foreach: colorScheme.colors">
-		<li data-bind="style:{ 'border-color': hex, width: liWidth }, css:{ dark: isDark }">
+		<li data-bind="style:{ 'border-color': hex, width: liWidth }, css:{ dark: isDark, selected: isSelected }, click: select">
 			<div class="inner" data-bind="style:{ 'background-color': hex }">
 				<div class="bg"></div>
-				<i data-bind="click:remove" class="fa fa-minus" ></i>
+				<i data-bind="click:remove">-</i>
 				<span data-bind="text: hex"></span>
 				<span data-bind="text: rgb"></span>
 				<span data-bind="text: hsv"></span>
@@ -67,16 +67,16 @@
 			</ul>
 		</li>
 	</ul>
-	<footer>
-		<div class="right">
-			<a href="https://twitter.com/jskurseberlin"><i class="fa fa-twitter"></i>@jskurseberlin</a>
-			<a href="#"><i class="fa fa-info"></i>info</a>
-		</div>
-		<div class="left">
-			A <a href="http://javascript-kurse-berlin.de/">JavaScript Kurse Berlin</a> Experiment.
-		</div>
-	</footer>
 </div>
+<footer>
+	<div class="right">
+		<a href="https://twitter.com/jskurseberlin"><i class="fa fa-twitter"></i>@jskurseberlin</a>
+		<a href="#"><i class="fa fa-info"></i>info</a>
+	</div>
+	<div class="left">
+		A <a href="http://javascript-kurse-berlin.de/">JavaScript Kurse Berlin</a> Experiment.
+	</div>
+</footer>
 <template id="range-control">
 	<label data-bind="attr:{ for: name }, text: label"></label>
 	<input type="number" data-bind="textInput: obs" class="for-range" />

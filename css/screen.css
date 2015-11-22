@@ -15,11 +15,17 @@ html, body, .wrapper{
 	height: 100%;
 }
 
+.cl{
+	clear: both;
+}
+
 .wrapper{
 	width: 1020px;
 	margin: 0 auto;
 	padding-top: 20px;
 	position: relative;
+	user-select: none;
+	-webkit-user-select: none;
 }
 
 /******************
@@ -27,7 +33,9 @@ html, body, .wrapper{
 ******************/
 header{
 	position: absolute;
-	z-index: 1;
+    z-index: 1;
+    top: 15px;
+    left: 20px;
 }
 
 header h1, header h1 em{
@@ -82,8 +90,18 @@ header span{
 ******************/
 .add-color{
 	float: right;
-	position: relative;
-	z-index: 6;
+    position: relative;
+    z-index: 6;
+    font-size: 20px;
+    top: 12px;
+    left: 16px;
+    cursor: pointer;
+    transition: all 400ms ease;
+    padding: 0 2px;
+}
+
+.add-color:hover{
+	background-color: #333;
 }
 
 .current-scheme{
@@ -101,6 +119,15 @@ header span{
     border-bottom-width: 2px;
     border-bottom-style: solid;
     position: relative;
+    /*transition: color 400ms ease;*/
+}
+
+.current-scheme li.selected{
+	color: #fff;
+}
+
+.current-scheme li.selected .bg{
+	opacity: 0;
 }
 
 .current-scheme li .inner{
@@ -110,13 +137,19 @@ header span{
 	top: -15px;
 	left: 0;
 	width: 100%;
-	transition: all 400ms ease;
+	transition: height top padding 400ms ease;
 }
 
 .current-scheme li:hover .inner{
 	height: 90px;
 	top: -45px;
 	padding: 5px 0;
+}
+
+.current-scheme li.selected:hover .inner{
+	height: 18px;
+	top: -15px;
+	padding: 0;
 }
 
 .current-scheme li .bg{
@@ -133,13 +166,18 @@ header span{
 
 .current-scheme li i{
 	position: absolute;
-	right: 5px;
-	top: 5px;
-	cursor: pointer;
+    right: 0;
+    top: 30px;
+    font-size: 20px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.3);
+    transition: all 400ms ease;
+    padding: 0 7px 3px;
+    z-index: 4;
 }
 
-.current-scheme li:hover i{
-	z-index: 4;
+.current-scheme li i:hover{
+	background: rgba(255,255,255,0.1);
 }
 
 .current-scheme li:hover .bg{
@@ -200,11 +238,11 @@ header span{
 
 .active-color-indicator{
 	position: absolute;
-	width: 6px;
-	height: 6px;
-	margin: -3px 0 0 -3px;
+	width: 8px;
+	height:8px;
+	margin: -4px 0 0 -4px;
 	border-radius: 6px;
-	border: 1px solid #fff;
+	border: 2px solid #fff;
 	z-index: 1;
 	left: 50px;
 	top: 50px;
@@ -274,6 +312,7 @@ footer{
 	bottom: 7px;
 	position: absolute;
 	width: 100%;
+	padding: 0 20px;
 	clear: left;
 }
 

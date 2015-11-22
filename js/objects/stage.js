@@ -9,11 +9,16 @@ define(function( require ){
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera( 75, this.settings.width / this.settings.height, 0.1, 1000 );
 		this.camera.position.z = 5;
+
 		this.renderer = new THREE.WebGLRenderer({
 			antialias: true,
 			alpha: true
 		});
-		this.renderer.domElement.onmousemove = this._setMouseCoords.bind( this );
+
+		this._baseCameraPos = null;
+		this._f = null;
+		this._lookAtCenter = false;
+
 		this.renderer.setSize( this.settings.width, this.settings.height );
 		this.settings.container.appendChild( this.renderer.domElement );
 		this.render();		
@@ -28,12 +33,18 @@ define(function( require ){
 			x: ( pos.x + 1 ) * this.settings.width / 2,
 			y: ( - pos.y + 1) * this.settings.height / 2
 		};
-
 	};
 
-	Stage.prototype.setCameraPosition = function( x, y, z ) {
+	Stage.prototype.setCameraPosition = function( x, y, z, f, lookAtCenter ) {
+		this._baseCameraPos = { x: x, y: y, z: z };
+
 		this.camera.position.set( x, y, z );
-		this.camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
+		this._f = f;
+		this._lookAtCenter = lookAtCenter;
+
+		if( lookAtCenter ) {
+			this.camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
+		}
 	};
 
 	Stage.prototype.add = function( object ) {
@@ -42,15 +53,20 @@ define(function( require ){
 
 	Stage.prototype.render = function() {
 		this.emit( 'update' );
+
+		if( window.mousePosRelX !== undefined ) {
+			this.camera.position.x = this._baseCameraPos.x + this._f * mousePosRelX;
+			this.camera.position.y = this._baseCameraPos.y + this._f * mousePosRelY;
+			
+			if( this._lookAtCenter ) {
+				this.camera.lookAt(  new THREE.Vector3( 0, 0, 0 ) );
+			}
+		}
+		
 		this.renderer.render( this.scene, this.camera );
 		requestAnimationFrame( this.render.bind( this ) );
 	};
 
-	Stage.prototype._setMouseCoords = function( event ) {
-		// this.camera.position.x = -3 + ( 6 * ( event.layerX / this.settings.width ) );
-		// this.camera.position.y = 3 - ( 6 * ( event.layerY / this.settings.height ) );
-		// this.camera.lookAt(  new THREE.Vector3( 0, 0, 0 ) );
-	};
 
 	return Stage;
 });

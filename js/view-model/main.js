@@ -22,6 +22,8 @@ define(function( require ){
 		this.rgbGreen = this._getObservable( 'rgb' );
 		this.rgbBlue = this._getObservable( 'rgb' );
 		this.colorScheme = new ColorScheme();
+		this.colorScheme.on( 'selection-changed', this._update.bind( this, 'selection' ) );
+		this.colorScheme.on( 'update', this._applyScheme.bind( this ) );
 
 		this.hexValue = this._getObservable( 'hex' );
 
@@ -31,9 +33,14 @@ define(function( require ){
 
 		this._scheme3D = this._getScheme3D();
 
-		setTimeout( this._update.bind( this, 'initial' ), 10 );
+		setTimeout( this._init.bind( this ), 10 );
 	}
 
+	Main.prototype._init = function() {
+		this._update( 'selection' );
+		this._applyScheme();
+	};
+	
 	Main.prototype._getRgbCube = function() {
 		return new RgbCube({
 			container:  document.querySelector( '.rgb .example' ),
@@ -70,6 +77,10 @@ define(function( require ){
 		});
 	};
 
+	Main.prototype._applyScheme = function() {
+		this._scheme3D.setColors( this.colorScheme.getArray() );
+	};
+
 	Main.prototype._getObservable = function( changeSource ) {
 		var observable = ko.observable();
 		observable.subscribe( this._update.bind( this, changeSource ) );
@@ -82,9 +93,9 @@ define(function( require ){
 		}
 
 		this._isUpdating = true;
-		if( changeSource === 'initial' ) {
+		if( changeSource === 'selection' ) {
 			//this.color = tinycolor({ r: 66, g: 33, b: 99 });
-			this.color = tinycolor({ r: 189, g: 163, b: 163 });
+			this.color = this.colorScheme.selectedColor.color;
 		}
 		else if( changeSource === 'hsv' ) {
 			this.color = tinycolor({
@@ -129,6 +140,10 @@ define(function( require ){
 		this.rgbBlue( rgb.b );
 
 		this.hexValue( this.color.toHexString() );
+
+		if( changeSource !== 'selection' ) {
+			this.colorScheme.selectedColor.set( this.color );
+		}
 
 		this._isUpdating = false;
 	};

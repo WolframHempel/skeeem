@@ -14,7 +14,7 @@ define(function( require ){
 		this._stage = new Stage( settings );
 		this._geometry = this._createGeometry();
 		this._connectingLineGeometry = null;
-		this._stage.setCameraPosition( PI, PI, 5 );
+		this._stage.setCameraPosition( PI, PI, 5, 0.5, true );
 		this._material = new THREE.PointsMaterial({ size: this._settings.pointSize, vertexColors: THREE.VertexColors });
 		this._points = new THREE.Points( this._geometry, this._material );
 		this._stage.add( this._points );

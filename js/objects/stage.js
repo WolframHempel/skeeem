@@ -9,6 +9,7 @@ define(function( require ){
 		this.scene = new THREE.Scene();
 		this.camera = new THREE.PerspectiveCamera( 75, this.settings.width / this.settings.height, 0.1, 1000 );
 		this.camera.position.z = 5;
+		this.updateCamera = true;
 
 		this.renderer = new THREE.WebGLRenderer({
 			antialias: true,
@@ -54,7 +55,7 @@ define(function( require ){
 	Stage.prototype.render = function() {
 		this.emit( 'update' );
 
-		if( window.mousePosRelX !== undefined ) {
+		if( window.mousePosRelX !== undefined && this.updateCamera ) {
 			this.camera.position.x = this._baseCameraPos.x + this._f * mousePosRelX;
 			this.camera.position.y = this._baseCameraPos.y + this._f * mousePosRelY;
 			

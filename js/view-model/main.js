@@ -42,7 +42,7 @@ define(function( require ){
 	};
 	
 	Main.prototype._getRgbCube = function() {
-		return new RgbCube({
+		var rgbCube = new RgbCube({
 			container:  document.querySelector( '.rgb .example' ),
 			width: 300,
 			height: 300,
@@ -50,6 +50,10 @@ define(function( require ){
 			side: 2.5,
 			pointsPerSide: 20
 		});
+
+		rgbCube.colorIndicatorCollection.setColorScheme( this.colorScheme );
+
+		return rgbCube;
 	};
 
 	Main.prototype._getScheme3D = function() {

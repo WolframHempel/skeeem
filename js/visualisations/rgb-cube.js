@@ -4,6 +4,7 @@ define(function( require ){
 	var tinycolor = require( 'tinycolor' );
 	var getLine = require( '../utils/line-segment-factory' );
 	var PI = Math.PI;
+	var ColorIndicator = require( './color-indicator-collection' );
 
 	function RgbCube( settings ) {
 		this._settings = settings;
@@ -21,17 +22,26 @@ define(function( require ){
 		this._spotLight.position.set( 0, 0, 3 );
 		this._stage.add( this._spotLight );
 		this._addLines();
-		this._activeColorIndicator = document.createElement( 'div' );
-		this._activeColorIndicator.className = 'active-color-indicator';
-		this._settings.container.appendChild( this._activeColorIndicator );
+
+		this.colorIndicatorCollection = new ColorIndicator( this._settings.container, this.getPositionForColor.bind( this ) );
 	}
+
+	RgbCube.prototype.getPositionForColor = function( color ) {
+		var side =  this._settings.side;
+		var rgb = color.getRgb();
+		var cX = ( rgb.r / 255 ) * side;
+		var cY = ( rgb.g / 255 ) * side;
+		var cZ = ( rgb.b / 255 ) * side;
+		
+		return this._stage.toScreenCoords( new THREE.Vector3( cX, cY, cZ ) );
+	};
 
 	RgbCube.prototype.setColor = function( rgb ) {
 		var side =  this._settings.side;
 		var cX = ( rgb.r / 255 ) * side;
 		var cY = ( rgb.g / 255 ) * side;
 		var cZ = ( rgb.b / 255 ) * side;
-		var i, v, indicatorPosition;
+		var i, v;
 
 		for( i = 0; i < this._geometry.vertices.length; i++ ) {
 			v = this._geometry.vertices[ i ];
@@ -41,28 +51,22 @@ define(function( require ){
 				this._geometry.vertices[ i ].z = 999;
 			}
 		}
+
+		// top
 		this._lineVertices.t.fl.x = cX;
 		this._lineVertices.t.fr.z = cZ;
 		this._lineVertices.t.fc.x = cX;
 		this._lineVertices.t.fc.z = cZ;
 
-
+		// center
 		this._lineVertices.c.b.x = cX;
 		this._lineVertices.c.b.y = cY;
 		this._lineVertices.c.b.z = cZ;
-
-		
 		this._lineVertices.c.r.y = cY;
 		this._lineVertices.c.r.z = cZ;
-
 		this._lineVertices.c.l.x = cX;
 		this._lineVertices.c.l.y = cY;
-
 		this._lineVertices.c.f.y = cY;
-
-		indicatorPosition = this._stage.toScreenCoords( new THREE.Vector3( cX, cY, cZ ) );
-		this._activeColorIndicator.style.left = indicatorPosition.x + 'px';
-		this._activeColorIndicator.style.top = indicatorPosition.y + 'px';
 
 		this._geometry.verticesNeedUpdate = true;
 		this._lineGeometry.verticesNeedUpdate = true;

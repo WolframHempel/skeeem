@@ -16,6 +16,7 @@ define(function( require ){
 
 		this._stage.setCameraPosition( 0.1, -0.05, 0.23, 0.1, false );
 		this._stage.camera.rotation.z = 0.1;
+		this._stage.updateCamera = false;
 
 		//var directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
 		//directionalLight.position.set( 0, 1, 0 );

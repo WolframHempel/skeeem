@@ -130,6 +130,10 @@ header span{
 	opacity: 0;
 }
 
+.current-scheme li.highlighted .bg{
+	background-color: #333;
+}
+
 .current-scheme li .inner{
 	height: 18px;
 	overflow: hidden;
@@ -236,16 +240,22 @@ header span{
 	position: relative;
 }
 
-.active-color-indicator{
+.color-indicator{
 	position: absolute;
 	width: 8px;
 	height:8px;
 	margin: -4px 0 0 -4px;
 	border-radius: 6px;
-	border: 2px solid #fff;
+	border: 2px solid rgba( 255, 255, 255, 0.6 );
+	cursor: pointer;
 	z-index: 1;
 	left: 50px;
 	top: 50px;
+}
+
+.color-indicator.selected,
+.color-indicator:hover{
+	border-color: #fff;
 }
 
 input[type=range]{

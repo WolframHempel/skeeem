@@ -21,13 +21,10 @@
 		<li>1D</li>
 	</ul>
 	<div class="schemes"></div>
-	<!--
-	<div class="current-color" data-bind="style:{ 'background-color': hexValue }"></div>
-	<input type="text" data-bind="value: hexValue" />
-	-->
+
 	<div class="add-color" data-bind="click: colorScheme.add.bind( colorScheme )">+</div> 
 	<ul class="current-scheme" data-bind="foreach: colorScheme.colors">
-		<li data-bind="style:{ 'border-color': hex, width: liWidth }, css:{ dark: isDark, selected: isSelected }, click: select">
+		<li data-bind="style:{ 'border-color': hex, width: liWidth }, css:{ dark: isDark, selected: isSelected, highlighted: isHighlighted }, click: select">
 			<div class="inner" data-bind="style:{ 'background-color': hex }">
 				<div class="bg"></div>
 				<i data-bind="click:remove">-</i>

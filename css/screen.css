@@ -9,6 +9,7 @@
 
 body{
 	background-color: #000;
+	position: relative;
 }
 
 html, body, .wrapper{
@@ -23,6 +24,7 @@ html, body, .wrapper{
 	width: 1020px;
 	margin: 0 auto;
 	padding-top: 20px;
+	min-height: 920px;
 	position: relative;
 	user-select: none;
 	-webkit-user-select: none;

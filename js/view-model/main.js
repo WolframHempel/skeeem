@@ -65,7 +65,7 @@ define(function( require ){
 	};
 
 	Main.prototype._getColorCone = function( colorSpace ) {
-		return new ColorCone({
+		var colorCone = new ColorCone({
 			container:  document.querySelector( '.' + colorSpace.toLowerCase() + ' .example' ),
 			width: 300,
 			height: 300,
@@ -79,6 +79,10 @@ define(function( require ){
 			gapEnd: Math.PI * 0.25,
 			colorSpace: colorSpace
 		});
+
+		colorCone.colorIndicatorCollection.setColorScheme( this.colorScheme );
+
+		return colorCone;
 	};
 
 	Main.prototype._applyScheme = function() {

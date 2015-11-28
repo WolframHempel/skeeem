@@ -5,6 +5,7 @@ define(function( require ){
 	var Stage = require( '../objects/stage' );
 	var tinycolor = require( 'tinycolor' );
 	var PI = Math.PI;
+	var ColorIndicatorCollection = require( './color-indicator-collection' );
 
 	function ColorCone( settings ) {
 		this._settings = settings;
@@ -23,30 +24,62 @@ define(function( require ){
 		this._spotLight.position.set( 0, 0, 3 );
 		this._stage.add( this._spotLight );
 		this._addLines();
-		this._activeColorIndicator = document.createElement( 'div' );
-		this._activeColorIndicator.className = 'active-color-indicator';
-		this._settings.container.appendChild( this._activeColorIndicator );
+
+		this.colorIndicatorCollection = new ColorIndicatorCollection( this._settings.container, this.getPositionForColor.bind( this ) );
 	}
+
+	ColorCone.prototype.getPositionForColor = function( colorObj ) {
+		var color, alpha, hue;
+
+		
+		if( this._isHsv ) {
+			color = colorObj.color.toHsv();
+		} else {
+			color = colorObj.color.toHsl();
+		}
+
+		hue = ( color.h / 360 ) * PI * 2;
+
+		if( ( hue + this._hueOffset ) > 2 * PI ) {
+			alpha = ( hue - this._hueOffset ) - 2 * PI;
+		} else {
+			alpha = hue - this._hueOffset;
+		}
+
+		var f = this._isHsv ? color.v : color.l;
+		var x = Math.sin( alpha ) * r;
+		var r = this._getRadius( f ) * color.s;
+		var y = ( this._settings.coneHeight * f ) - ( this._settings.coneHeight / 2 );
+		var z = Math.cos( alpha ) * r;
+
+		return this._stage.toScreenCoords( new THREE.Vector3( x, y, z ) );
+	};
 
 	ColorCone.prototype.setColor = function( colorMap ) {
 		var i, c, f, y, r, a, hue, indicatorPosition, hueOffset = ( colorMap.h / 360 ) * PI * 2;
 
+		this._hueOffset = hueOffset;
+
 		for( i = 0; i < this._relativeCoords.length; i++ ) {
 
-			c = this._relativeCoords[ i ];			
+			// Get the relative coordinates
+			c = this._relativeCoords[ i ];
 
+			// Make sure Hue wraps around (0-2PI)
 			if( ( c[ 2 ] + hueOffset ) > 2 * PI ) {
 				hue = ( c[ 2 ] + hueOffset ) - 2 * PI;
 			} else {
 				hue = c[ 2 ] + hueOffset;
 			}
 
+			// Rather than removing particles, we just movethem behind the camera
 			if( c[ 0 ] > ( this._isHsv ? colorMap.v : colorMap.l ) && c[ 2 ] > Math.PI * 1.5 ) {
 				this._geometry.vertices[ i ].z = 999;
 			} else {
 				this._geometry.vertices[ i ].z = this._geometry.vertices[ i ].origZ;
 			}
 
+			// Set the color of this point
 			this._geometry.colors[ i ] = this._getColor( c[ 0 ], c[ 1 ], hue );
 		}
 		this._geometry.verticesNeedUpdate = true;
@@ -54,12 +87,6 @@ define(function( require ){
 		
 		f = colorMap.v || colorMap.l;
 		y = ( this._settings.coneHeight * f ) - ( this._settings.coneHeight / 2 );
-		r = this._getRadius( f ) * colorMap.s;
-		indicatorPosition = this._stage.toScreenCoords( new THREE.Vector3( 0, y, r ) );
-
-		this._activeColorIndicator.style.left = indicatorPosition.x + 'px';
-		this._activeColorIndicator.style.top = indicatorPosition.y + 'px';
-
 		r = this._getRadius( f );
 		
 		for( i = 0; i < this._circleLine.vertices.length; i++ ) {

@@ -3,13 +3,15 @@ define(function( require ){
 
 	var three = require( 'three' );
 	var Stage = require( '../objects/stage' );
+	var ColorIndicatorCollection = require( './color-indicator-collection' );
 	var tinycolor = require( 'tinycolor' );
+
 	var PI = Math.PI;
 	var SIN_15 = Math.sin( PI * 1.5 );
 	var COS_15 = Math.cos( PI * 1.5 );
 	var SIN_2 = Math.sin( PI * 2 );
 	var COS_2 = Math.cos( PI * 2 );
-	var ColorIndicatorCollection = require( './color-indicator-collection' );
+	var LINE_OPACITY = 0.3;
 
 	function ColorCone( settings ) {
 		this._settings = settings;
@@ -28,14 +30,12 @@ define(function( require ){
 		this._spotLight.position.set( 0, 0, 3 );
 		this._stage.add( this._spotLight );
 		this._addLines();
-
 		this.colorIndicatorCollection = new ColorIndicatorCollection( this._settings.container, this.getPositionForColor.bind( this ) );
 	}
 
 	ColorCone.prototype.getPositionForColor = function( colorObj ) {
 		var color, alpha, hue, f, r, x, y, z;
 
-		
 		if( this._isHsv ) {
 			color = colorObj.color.toHsv();
 		} else {
@@ -87,8 +87,6 @@ define(function( require ){
 
 		this._geometry.verticesNeedUpdate = true;
 		this._geometry.colorsNeedUpdate = true;
-	
-		
 
 		f = colorMap.v || colorMap.l;
 		y = ( this._settings.coneHeight * f ) - ( this._settings.coneHeight / 2 );
@@ -101,23 +99,23 @@ define(function( require ){
 			this._circleLine.vertices[ i ].z = r * Math.cos( a );
 		}
 
+		this._vertices.l.a.x = r * SIN_15;
+		this._vertices.l.a.y = y;
+		this._vertices.l.a.z = r * COS_15;
 
+		this._vertices.l.b.x = r * SIN_2;
+		this._vertices.l.b.y = y;
+		this._vertices.l.b.z = r * COS_2;
+
+		this._vertices.l.c.y = y;
+		this._hslTopLineGeometry.verticesNeedUpdate = true;
+		
 		if( !this._isHsv && y > 0 ) {
-			
-
-			this._vertices.l.a.x = r * SIN_15;
-			this._vertices.l.a.y = y;
-			this._vertices.l.a.z = r * COS_15;
-
-			this._vertices.l.b.x = r * SIN_2;
-			this._vertices.l.b.y = y;
-			this._vertices.l.b.z = r * COS_2;
-
-			this._vertices.l.c.y = y;
-			
-			this._hslTopLineGeometry.verticesNeedUpdate = true;
 			y = 0;
 			r = this._settings.radius;
+			this._topLineMaterial.opacity = LINE_OPACITY;
+		} else {
+			this._topLineMaterial.opacity = 0;
 		}
 
 		this._vertices.c.a.y = y;
@@ -133,8 +131,11 @@ define(function( require ){
 
 	ColorCone.prototype._addLines = function() {
 		this._circleLine =  new THREE.Geometry();
+		this._hslZeroCircleLineGeometry = new THREE.Geometry(); // catchy naming
 		this._connectingLineGeometry = new THREE.Geometry();
 		this._hslTopLineGeometry = new THREE.Geometry();
+		this._topLineMaterial = this._getLineMaterial();
+		
 		var radiusGeometry = new THREE.Geometry();
 		var r = this._settings.radius;
 		
@@ -147,13 +148,12 @@ define(function( require ){
 		var xB = this._settings.radius * -1;
 		var yB = 0;
 		
-		var material = new THREE.LineBasicMaterial({ color: 0xffffff });
+		var material = this._getLineMaterial();
 		var yBase = this._isHsv ? y2: 0;
 		var a, v;
 		
-		material.opacity = 1;//0.3;
-		material.transparent = true;
-
+		// Create the line that goes around the color cone's radius (top for HSV,
+		// center for HSL)
 		for( a = this._settings.gapEnd; a < Math.PI * 1.5; a += 0.1 ) {
 			this._circleLine.vertices.push( new THREE.Vector3( 0, 0, 0 ) );
 			radiusGeometry.vertices.push( new THREE.Vector3( 
@@ -163,6 +163,19 @@ define(function( require ){
 			));
 		}
 
+		// Create the extra bit of radius line that is only visible if a HSL cone's
+		// y value > 0
+		if( !this._isHsv ) {
+			for( a = Math.PI * 1.5; a <= Math.PI * 2; a += 0.1 ) {
+				this._hslZeroCircleLineGeometry.vertices.push( new THREE.Vector3( 
+					this._settings.radius * Math.sin( a ), 
+					0,
+					this._settings.radius * Math.cos( a ) 
+				));
+			}
+		}
+		
+		// Create vertices
 		v = {
 			// hsl
 			l: {
@@ -194,11 +207,12 @@ define(function( require ){
 			}
 		};
 
+		// Create the line geometry for both HSV and HSL
 		this._connectingLineGeometry.vertices = [
 			//bottom triangle
 			v.b, v.c.a,
-			v.c.a, v.c.c,
-			v.c.b, v.c.c,
+			v.l.a, v.l.c,
+			v.l.b, v.l.c,
 			v.b, v.t.c,
 
 			//top
@@ -208,22 +222,35 @@ define(function( require ){
 			v.b, v.t.a
 		];
 
+		// Create the extra bit of line geometry that only becomes visible
+		// for HSL with Y > 0
 		this._hslTopLineGeometry.vertices = [
 			v.l.a, v.l.c,
-			//v.l.b, v.l.c,
 			v.l.a, v.l.d,
 			v.l.b, v.l.e
 		];
 
+		// Make vertices available so that they can be manipulated in setColor()
 		this._vertices = v;
+
+		// Add Line Geometries to the stage. We're using uninterupted lines for the round radius
+		// lines and line segments for the connecting bits
 		this._stage.add( new THREE.LineSegments( this._connectingLineGeometry, material ) );
 		this._stage.add( new THREE.Line( this._circleLine, material ) );
 		this._stage.add( new THREE.Line( radiusGeometry, material ) );
-
-		if( !this._isHsv ) {
-			this._stage.add( new THREE.LineSegments( this._hslTopLineGeometry, material ) );
-		}
 		
+		// Add HSL specific Line Geometries
+		if( !this._isHsv ) {
+			this._stage.add( new THREE.Line( this._hslZeroCircleLineGeometry, this._topLineMaterial ) );
+			this._stage.add( new THREE.LineSegments( this._hslTopLineGeometry, this._topLineMaterial ) );
+		}
+	};
+
+	ColorCone.prototype._getLineMaterial = function() {
+		var material = new THREE.LineBasicMaterial({ color: 0xffffff });
+		material.opacity = LINE_OPACITY;
+		material.transparent = true;
+		return material;
 	};
 
 	ColorCone.prototype._createGeometry = function() {

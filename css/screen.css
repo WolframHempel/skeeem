@@ -126,6 +126,9 @@ header span{
 }
 
 .current-scheme li.selected{
+	color: #000;
+}
+.current-scheme li.selected.dark{
 	color: #fff;
 }
 
@@ -153,11 +156,11 @@ header span{
 	padding: 5px 0;
 }
 
-.current-scheme li.selected:hover .inner{
+/*.current-scheme li.selected:hover .inner{
 	height: 18px;
 	top: -15px;
 	padding: 0;
-}
+}*/
 
 .current-scheme li .bg{
 	position: absolute;

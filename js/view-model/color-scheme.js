@@ -40,6 +40,8 @@ define(function( require ){
 		var index = this.colors.indexOf( color );
 		this.colors.splice( index , 1 );
 		this._update();
+		var nextColor = this.colors()[ Math.max( index - 1, 0 ) ];
+		requestAnimationFrame( this.select.bind( this, nextColor ) );
 	};
 
 	ColorScheme.prototype._init = function( initialColorCount ) {

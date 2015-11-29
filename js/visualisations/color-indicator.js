@@ -45,6 +45,7 @@ define(function( require ){
 
 	ColorIndicator.prototype.destroy = function() {
 		cancelAnimationFrame( this._animationFrameId );
+		this._container.removeChild( this._element );
 	};
 
 	return ColorIndicator;

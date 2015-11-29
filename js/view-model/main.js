@@ -4,6 +4,7 @@ define(function( require ){
 	var ColorCone = require( '../visualisations/color-cone' );
 	var RgbCube = require( '../visualisations/rgb-cube' );
 	var Scheme3D = require( '../visualisations/scheme-3d' );
+	var SliderBackgrounds = require( '../visualisations/slider-backgrounds' );
 	var tinycolor = require( 'tinycolor' );
 	
 	function Main() {
@@ -24,6 +25,8 @@ define(function( require ){
 		this.colorScheme = new ColorScheme();
 		this.colorScheme.on( 'selection-changed', this._update.bind( this, 'selection' ) );
 		this.colorScheme.on( 'update', this._applyScheme.bind( this ) );
+
+		this.sliderBackgrounds = new SliderBackgrounds();
 
 		this.hexValue = this._getObservable( 'hex' );
 
@@ -148,6 +151,8 @@ define(function( require ){
 		this.rgbBlue( rgb.b );
 
 		this.hexValue( this.color.toHexString() );
+
+		this.sliderBackgrounds.setColor( this.color );
 
 		if( changeSource !== 'selection' ) {
 			this.colorScheme.selectedColor.set( this.color );

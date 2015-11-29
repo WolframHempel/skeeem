@@ -360,6 +360,10 @@ input[type=number]::-webkit-outer-spin-button{
     pointer-events: none;
 }
 
+.slider-bg canvas{
+	display: block;
+}
+
 .rgb-red .slider-bg{
 	background-image: linear-gradient( 90deg, #000, #F00 );
 }
@@ -371,28 +375,6 @@ input[type=number]::-webkit-outer-spin-button{
 .rgb-blue .slider-bg{
 	background-image: linear-gradient( 90deg, #000, #00F );
 }
-
-.hsv-hue .slider-bg,
-.hsl-hue .slider-bg{
-	background-image: -webkit-canvas(hue);
-}
-
-.hsv-saturation .slider-bg{
-	background-image: -webkit-canvas(hsv-saturation);
-}
-
-.hsv-value .slider-bg{
-	background-image: -webkit-canvas(hsv-value);
-}
-
-.hsl-saturation .slider-bg{
-	background-image: -webkit-canvas(hsl-saturation);
-}
-
-.hsl-value .slider-bg{
-	background-image: -webkit-canvas(hsl-lightness);
-}
-
 /******************
 * Footer
 ******************/

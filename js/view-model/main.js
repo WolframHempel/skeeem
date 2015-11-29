@@ -26,7 +26,7 @@ define(function( require ){
 		this.colorScheme.on( 'selection-changed', this._update.bind( this, 'selection' ) );
 		this.colorScheme.on( 'update', this._applyScheme.bind( this ) );
 
-		this.sliderBackgrounds = new SliderBackgrounds();
+		this.sliderBackgrounds = null;
 
 		this.hexValue = this._getObservable( 'hex' );
 
@@ -40,6 +40,7 @@ define(function( require ){
 	}
 
 	Main.prototype._init = function() {
+		this.sliderBackgrounds = new SliderBackgrounds();
 		this._update( 'selection' );
 		this._applyScheme();
 	};

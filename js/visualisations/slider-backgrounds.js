@@ -4,11 +4,12 @@ define(function( require ){
 	var WIDTH = 200;
 
 	function SliderBackgrounds() {
-		this._hueCanvas = document.getCSSCanvasContext( '2d', 'hue', WIDTH, 2 );
-		this._hsvSaturationCanvas = document.getCSSCanvasContext( '2d', 'hsv-saturation', WIDTH, 2 );
-		this._hsvValueCanvas = document.getCSSCanvasContext( '2d', 'hsv-value', WIDTH, 2 );
-		this._hslSaturationCanvas = document.getCSSCanvasContext( '2d', 'hsl-saturation', WIDTH, 2 );
-		this._hslLightnessCanvas = document.getCSSCanvasContext( '2d', 'hsl-lightness', WIDTH, 2 );
+		this._hsvHueCanvas = this._getCanvas( 'hsv-hue' );
+		this._hslHueCanvas = this._getCanvas( 'hsl-hue' );
+		this._hsvSaturationCanvas = this._getCanvas( 'hsv-saturation' );
+		this._hsvValueCanvas = this._getCanvas( 'hsv-value' );
+		this._hslSaturationCanvas = this._getCanvas( 'hsl-saturation' );
+		this._hslLightnessCanvas = this._getCanvas( 'hsl-lightness' );
 		this._imageData = this._hsvSaturationCanvas.getImageData( 0, 0, WIDTH, 2 );
 		this._initHueCanvas();
 	}
@@ -34,7 +35,14 @@ define(function( require ){
 		this._applyGradient( this._hslSaturationCanvas, hslSaturationColors );
 		this._applyGradient( this._hsvValueCanvas, hsvValueColors );
 		this._applyGradient( this._hslLightnessCanvas, hslLightnessColors );
-		
+	};
+
+	SliderBackgrounds.prototype._getCanvas = function( className ) {
+		var canvas = document.createElement( 'canvas' );
+		canvas.width = WIDTH;
+		canvas.height = 2;
+		document.querySelector( '.' + className + ' .slider-bg' ).appendChild( canvas );
+		return canvas.getContext( '2d' );
 	};
 
 	SliderBackgrounds.prototype._applyGradient = function( canvas, data ) {
@@ -60,7 +68,8 @@ define(function( require ){
 			colors.push( tinyColor({ h: ( x / WIDTH ) * 360, s: 1, v: 1 }).toRgb() );
 		}
 
-		this._applyGradient( this._hueCanvas, colors );
+		this._applyGradient( this._hslHueCanvas, colors );
+		this._applyGradient( this._hsvHueCanvas, colors );
 	};
 
 	return SliderBackgrounds;

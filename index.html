@@ -75,9 +75,13 @@
 	</div>
 </footer>
 <template id="range-control">
+
 	<label data-bind="attr:{ for: name }, text: label"></label>
 	<input type="number" data-bind="textInput: obs" class="for-range" />
-	<input data-bind="attr:{ name: name, max: max }, textInput: obs" type="range" min="0"  step="1" />
+	<div class="slider-container">
+		<div class="slider-bg"></div>
+		<input data-bind="attr:{ name: name, max: max }, textInput: obs" type="range" min="0"  step="1" />
+	</div>
 </template>
 </body>
 </html>

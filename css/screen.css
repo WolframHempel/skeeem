@@ -215,6 +215,42 @@ header span{
 .current-scheme li.selected{
 	/*border-bottom: 2px solid #fff;*/
 }
+/******************
+* Scheme Visualisations
+******************/
+.schemes{
+	width: 1000px;
+	height: 400px;
+	overflow: hidden;
+}
+
+.schemes ul{
+	width: 3000px;
+	height: 400px;
+	transition: margin-left 400ms ease;
+}
+
+.schemes.show3d ul{
+	margin-left: 0;
+}
+
+.schemes.show2d ul{
+	margin-left: -1000px;
+}
+
+.schemes.show1d ul{
+	margin-left: -2000px;
+}
+
+.schemes li{
+	width: 1000px;
+	height: 400px;
+	float: left;
+}
+
+.schemes .scheme_2d canvas{
+	margin: 90px 150px 0;
+}
 
 /******************
 * Color Spaces

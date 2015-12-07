@@ -11,7 +11,7 @@ define(function( require ){
 	var COS_15 = Math.cos( PI * 1.5 );
 	var SIN_2 = Math.sin( PI * 2 );
 	var COS_2 = Math.cos( PI * 2 );
-	var LINE_OPACITY = 0.3;
+	var LINE_OPACITY = 0.4;
 
 	function ColorCone( settings ) {
 		this._settings = settings;

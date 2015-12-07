@@ -16,11 +16,18 @@
 </header>
 <div class="wrapper">
 	<ul class="scheme-dimensions">
-		<li class="selected">3D</li>
-		<li>2D</li>
-		<li>1D</li>
+		<li data-bind="click: currentVis.bind($data, '3d'), css:{ selected: currentVis() === '3d' }">3D</li>
+		<li data-bind="click: currentVis.bind($data, '2d'), css:{ selected: currentVis() === '2d' }">2D</li>
+		<li data-bind="click: currentVis.bind($data, '1d'), css:{ selected: currentVis() === '1d' }">1D</li>
 	</ul>
-	<div class="schemes"></div>
+
+	<div class="schemes" data-bind="css:{ 'show3d': currentVis() === '3d', 'show2d': currentVis() === '2d', 'show1d': currentVis() === '1d'}">
+		<ul>
+			<li class="scheme_3d"></li>
+			<li class="scheme_2d"></li>
+			<li class="scheme_1d"></li>
+		</ul>
+	</div>
 
 	<div class="add-color" data-bind="click: colorScheme.add.bind( colorScheme )">+</div> 
 	<ul class="current-scheme" data-bind="foreach: colorScheme.colors">

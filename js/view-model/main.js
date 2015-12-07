@@ -4,12 +4,16 @@ define(function( require ){
 	var ColorCone = require( '../visualisations/color-cone' );
 	var RgbCube = require( '../visualisations/rgb-cube' );
 	var Scheme3D = require( '../visualisations/scheme-3d' );
+	var Scheme2D = require( '../visualisations/scheme-2d' );
 	var SliderBackgrounds = require( '../visualisations/slider-backgrounds' );
 	var tinycolor = require( 'tinycolor' );
 	
 	function Main() {
 		this.color = null;
 		this._isUpdating = false;
+
+		this.currentVis = ko.observable( '2d' );
+		this.currentVis.subscribe( this._applyScheme.bind( this ) );
 
 		this.hsvHue = this._getObservable( 'hsv' );
 		this.hsvSaturation = this._getObservable( 'hsv' );
@@ -22,6 +26,7 @@ define(function( require ){
 		this.rgbRed = this._getObservable( 'rgb' );
 		this.rgbGreen = this._getObservable( 'rgb' );
 		this.rgbBlue = this._getObservable( 'rgb' );
+		
 		this.colorScheme = new ColorScheme();
 		this.colorScheme.on( 'selection-changed', this._update.bind( this, 'selection' ) );
 		this.colorScheme.on( 'update', this._applyScheme.bind( this ) );
@@ -35,6 +40,7 @@ define(function( require ){
 		this._rgbCube = this._getRgbCube();
 
 		this._scheme3D = this._getScheme3D();
+		this._scheme2D = this._getScheme2D();
 
 		setTimeout( this._init.bind( this ), 10 );
 	}
@@ -62,9 +68,18 @@ define(function( require ){
 
 	Main.prototype._getScheme3D = function() {
 		return new Scheme3D({
-			container:  document.querySelector( '.schemes' ),
+			container:  document.querySelector( '.schemes .scheme_3d' ),
 			width: 1000,
 			height: 400,
+		});
+	};
+
+	Main.prototype._getScheme2D = function() {
+		return new Scheme2D({
+			container:  document.querySelector( '.schemes .scheme_2d' ),
+			width: 700,
+			height: 250,
+			side: 50
 		});
 	};
 
@@ -90,7 +105,17 @@ define(function( require ){
 	};
 
 	Main.prototype._applyScheme = function() {
-		this._scheme3D.setColors( this.colorScheme.getArray() );
+		var colors = this.colorScheme.getArray();
+
+		if( this.currentVis() === '3d' ) {
+			this._scheme3D.setColors( colors );
+		} 
+		
+		if( this.currentVis() === '2d' ) {
+			this._scheme2D.setColors( colors );
+		}
+		
+
 	};
 
 	Main.prototype._getObservable = function( changeSource ) {
@@ -106,7 +131,6 @@ define(function( require ){
 
 		this._isUpdating = true;
 		if( changeSource === 'selection' ) {
-			//this.color = tinycolor({ r: 66, g: 33, b: 99 });
 			this.color = this.colorScheme.selectedColor.color;
 		}
 		else if( changeSource === 'hsv' ) {

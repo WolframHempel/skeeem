@@ -10,6 +10,7 @@ define(function( require ){
 		this._loader = new THREE.JSONLoader();
 		this._materials = [];
 		this._createGeometries();
+		this._colorsLength = 0;
 		// this._stage.camera.position.x = 0.1;
 		// this._stage.camera.position.y = -0.05;
 		// this._stage.camera.position.z = 0.23;
@@ -24,9 +25,28 @@ define(function( require ){
 		this._stage.add(  new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 ) );
 	}
 
+	Scheme3D.prototype.highlightColor = function( index, isHighlighted ) {
+		for( var i = 0; i < this._materials.length; i++ ){
+
+			if( i % this._colorsLength !== index && isHighlighted === true ) {
+				this._materials[ i ].wireframe = true;
+				this._materials[ i ].opacity = 0.15;
+				this._materials[ i ].transparent = true;
+
+			} else {
+				this._materials[ i ].wireframe = false;
+				this._materials[ i ].opacity = 1;
+				this._materials[ i ].transparent = false;
+			}
+			
+			this._materials[ i ].needsUpdate =true;
+		}
+	};
+
 	Scheme3D.prototype.setColors = function( colors ) {
 		var c, i;
-		
+		this._colorsLength = colors.length;
+
 		for( i = 0; i < this._materials.length; i++ ){
 			c = colors[ i % colors.length ];
 			this._materials[ i ].color.setRGB( c[ 0 ] / 255, c[ 1 ] / 255, c[ 2 ] / 255 );

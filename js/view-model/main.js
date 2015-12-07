@@ -12,7 +12,7 @@ define(function( require ){
 		this.color = null;
 		this._isUpdating = false;
 
-		this.currentVis = ko.observable( '2d' );
+		this.currentVis = ko.observable( '3d' );
 		this.currentVis.subscribe( this._applyScheme.bind( this ) );
 
 		this.hsvHue = this._getObservable( 'hsv' );
@@ -30,6 +30,7 @@ define(function( require ){
 		this.colorScheme = new ColorScheme();
 		this.colorScheme.on( 'selection-changed', this._update.bind( this, 'selection' ) );
 		this.colorScheme.on( 'update', this._applyScheme.bind( this ) );
+		this.colorScheme.on( 'highlight', this._setHighlight.bind( this ) );
 
 		this.sliderBackgrounds = null;
 
@@ -39,8 +40,10 @@ define(function( require ){
 		this._hslCone = this._getColorCone( 'HSL' );
 		this._rgbCube = this._getRgbCube();
 
-		this._scheme3D = this._getScheme3D();
-		this._scheme2D = this._getScheme2D();
+		this._schemeVisualisations = {
+			'3d': this._getScheme3D(),
+			'2d': this._getScheme2D()
+		};
 
 		setTimeout( this._init.bind( this ), 10 );
 	}
@@ -49,6 +52,10 @@ define(function( require ){
 		this.sliderBackgrounds = new SliderBackgrounds();
 		this._update( 'selection' );
 		this._applyScheme();
+	};
+
+	Main.prototype._getCurrentVis = function() {
+		return this._schemeVisualisations[ this.currentVis() ];
 	};
 	
 	Main.prototype._getRgbCube = function() {
@@ -105,17 +112,11 @@ define(function( require ){
 	};
 
 	Main.prototype._applyScheme = function() {
-		var colors = this.colorScheme.getArray();
+		this._getCurrentVis().setColors( this.colorScheme.getArray() );
+	};
 
-		if( this.currentVis() === '3d' ) {
-			this._scheme3D.setColors( colors );
-		} 
-		
-		if( this.currentVis() === '2d' ) {
-			this._scheme2D.setColors( colors );
-		}
-		
-
+	Main.prototype._setHighlight = function( index, isHighlighted ) {
+		this._getCurrentVis().highlightColor( index, isHighlighted );
 	};
 
 	Main.prototype._getObservable = function( changeSource ) {

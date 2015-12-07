@@ -8,7 +8,9 @@ define(function( require ){
 		this.hex = ko.observable();
 		this.hsv = ko.observable();
 		this.hsl = ko.observable();
+
 		this.isHighlighted = ko.observable( false );
+		this.isHighlighted.subscribe( this._setHighlighted.bind ( this ) );
 		this.isSelected = ko.observable( false );
 		this.isDark = ko.observable( false );
 		this.liWidth = colorScheme.liWidth;
@@ -25,6 +27,10 @@ define(function( require ){
 		return [ rgb.r, rgb.g, rgb.b ];
 	};
 	
+	Color.prototype._setHighlighted = function() {
+		this._colorScheme.highlight( this );
+	};
+
 	Color.prototype.select = function() {
 		this._colorScheme.select( this );
 	};

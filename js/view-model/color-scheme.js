@@ -31,6 +31,13 @@ define(function( require ){
 		this.emit( 'selection-changed' );
 	};
 
+	ColorScheme.prototype.highlight = function( highlightedColor ) {
+		var index = this.colors.indexOf( highlightedColor );
+		var isHighlighted = highlightedColor.isHighlighted();
+
+		this.emit( 'highlight', index, isHighlighted );
+	};
+
 	ColorScheme.prototype.add = function() {
 		this._addRandomColor();
 		this._update();

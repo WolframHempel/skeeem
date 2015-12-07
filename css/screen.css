@@ -248,7 +248,8 @@ header span{
 	float: left;
 }
 
-.schemes .scheme_2d canvas{
+.schemes .scheme_2d canvas,
+.schemes .scheme_1d canvas{
 	margin: 90px 150px 0;
 }
 

@@ -34,10 +34,43 @@ define(function( require ){
 			this._paintAnimationFrame = requestAnimationFrame( this._paint.bind( this ) );
 			return;
 		}
-		var x, y, i = 0, s = this._settings.side;
 
 		this._paintAnimationFrame = null;
 		this._clear();
+
+		if( this._settings.is2d ) {
+			this._paint2d();
+		} else {
+			this._paint1d();
+		}
+	};
+
+	Scheme2d.prototype._paint1d = function() {
+		var i, color, boxWidth = this._settings.width / this._colorLength;
+
+		for( i = 0; i < this._colors.length; i++ ) {
+			if( this._highlightedColorIndex > -1 && this._highlightedColorIndex !== i ) {
+				this._ctx.strokeStyle = 'rgb(' + this._colors[ i ].join( ',' ) + ')';
+				this._ctx.beginPath();
+				this._ctx.moveTo( ( i + 1 ) * boxWidth, 0 );
+				this._ctx.lineTo( i * boxWidth, 0 );
+				this._ctx.lineTo( i * boxWidth, this._settings.height );
+				this._ctx.lineTo( ( i + 1 )* boxWidth, this._settings.height );
+				this._ctx.stroke();
+			} else {
+				this._ctx.fillStyle = 'rgb(' + this._colors[ i ].join( ',' ) + ')';
+				this._ctx.fillRect( i * boxWidth, 0, boxWidth, this._settings.height );
+			}
+		}
+
+		this._ctx.beginPath();
+		this._ctx.moveTo( this._settings.width - 1, 0 );
+		this._ctx.lineTo( this._settings.width - 1, this._settings.height );
+		this._ctx.stroke();
+	};
+
+	Scheme2d.prototype._paint2d = function() {
+		var x, y, i = 0, s = this._settings.side;
 
 		for( x = 0; x < this._settings.width; x += this._settings.side )
 		for( y = 0; y < this._settings.height; y += this._settings.side ) {

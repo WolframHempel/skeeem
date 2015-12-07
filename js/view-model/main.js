@@ -42,7 +42,8 @@ define(function( require ){
 
 		this._schemeVisualisations = {
 			'3d': this._getScheme3D(),
-			'2d': this._getScheme2D()
+			'2d': this._getScheme2D(),
+			'1d': this._getScheme1D()
 		};
 
 		setTimeout( this._init.bind( this ), 10 );
@@ -86,9 +87,20 @@ define(function( require ){
 			container:  document.querySelector( '.schemes .scheme_2d' ),
 			width: 700,
 			height: 250,
-			side: 50
+			side: 50,
+			is2d: true
 		});
 	};
+
+	Main.prototype._getScheme1D = function() {
+		return new Scheme2D({
+			container:  document.querySelector( '.schemes .scheme_1d' ),
+			width: 700,
+			height: 250,
+			is2d: false
+		});
+	};
+
 
 	Main.prototype._getColorCone = function( colorSpace ) {
 		var colorCone = new ColorCone({

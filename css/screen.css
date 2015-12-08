@@ -448,3 +448,26 @@ footer .right a{
 footer .right a i{
 	margin-right: 2px;
 }
+
+/******************
+* About Section
+******************/
+#about{
+	position: absolute;
+    z-index: 1;
+    right: 30px;
+    bottom: 30px;
+    background: #000;
+    border: 1px solid #fff;
+    padding: 10px;
+    width: 230px;
+}
+
+#about li{
+	margin-bottom: 10px;
+}
+
+#about label{
+	display: block;
+	margin-bottom: 3px;
+}

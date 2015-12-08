@@ -7,6 +7,7 @@ requirejs.config({
     }
 });
 
+
 require(['./bower_components/three.js/three.min.js', ], function(){
 	require([ './js/view-model/main', 'ko' ], function( MainViewModel, ko ){
 		ko.applyBindings( new MainViewModel() );
@@ -17,3 +18,4 @@ require(['./bower_components/three.js/three.min.js', ], function(){
 		});
 	});
 });
+

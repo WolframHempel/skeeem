@@ -2,18 +2,26 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Coxer - A Color-Mixer</title>
+	<title>SKEEM - 3D colorscheme generator</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="description" content="3D color space visualisation and color scheme generator" />
+
+	<meta name="twitter:card" content="photo" />
+	<meta name="twitter:site" content="@jskurseberlin" />
+	<meta name="twitter:image" content="http://javascript-kurse-berlin.de/assets/images/jskurserberlin-twitter.png" />
+
 	<link rel="stylesheet" type="text/css" href="css/screen.css" />
 	<script type="text/javascript" data-main="js/start.js" src="bower_components/requirejs/require.js"></script>
 	<link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.css">
 	<link href='https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
 </head>
-<body>
+<body class="loading">
 <header>
-	<h1>sk<em>EEE</em>m</h1>
-	<span>colorschemes</span>
+	<h1>sk<em><span class="e1">E</span><span class="e2">E</span><span class="e3">E</span></em>m</h1>
+	<span class="subtitle">colorschemes <i>...loading</i></span>
 </header>
+<div id="loading-screen"></div>
 <div class="wrapper">
 	<ul class="scheme-dimensions">
 		<li data-bind="click: currentVis.bind($data, '3d'), css:{ selected: currentVis() === '3d' }">3D</li>
@@ -90,7 +98,7 @@
 			</li>
 			<li>
 				<label>Libraries used</label>
-				<a href="http://knockoutjs.com/">KnockoutJS</a>, <a href="http://threejs.org/">ThreeJS</a>, <a href="https://bgrins.github.io/TinyColor/">tinycolor</a>
+				<a href="http://knockoutjs.com/">KnockoutJS</a>, <a href="http://threejs.org/">ThreeJS</a>, <a href="https://bgrins.github.io/TinyColor/">tinycolor</a>, <a href="http://requirejs.org/">RequireJS</a>
 			</li>
 			<li>
 				<label>About the Author</label>

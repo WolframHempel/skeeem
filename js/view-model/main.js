@@ -55,6 +55,11 @@ define(function( require ){
 		this.sliderBackgrounds = new SliderBackgrounds();
 		this._update( 'selection' );
 		this._applyScheme();
+		setTimeout( this._loadFinished.bind( this ), 100 );
+	};
+
+	Main.prototype._loadFinished = function() {
+		document.body.classList.remove( 'loading' );
 	};
 
 	Main.prototype._getCurrentVis = function() {

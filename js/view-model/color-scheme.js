@@ -10,8 +10,22 @@ define(function( require ){
 		this.colors = ko.observableArray();
 		this.liWidth = ko.observable();
 		this.selectedColor = null;
+		this._hexCodeRegExp = /^\#[0-9A-F]{6}$/;
+		this._hashUpdateTimeout = null;
 		this._init( 5 );
 	}
+
+	ColorScheme.prototype.updateHash = function() {
+		if( this._hashUpdateTimeout === null ) {
+			this._hashUpdateTimeout = setTimeout( this.updateHash.bind( this ), 50 );
+			return;
+		}
+
+		this._hashUpdateTimeout = null;
+		document.location.hash = this.colors().map(function( color ){
+			return color.getHex();
+		}).join( ',' );
+	};
 
 	ColorScheme.prototype.getArray = function() {
 		return this.colors().map(function( color ){
@@ -52,12 +66,37 @@ define(function( require ){
 	};
 
 	ColorScheme.prototype._init = function( initialColorCount ) {
-		for( var i = 0; i < initialColorCount; i++ ) {
-			this._addRandomColor();
+		var colorsFromHash = this._getColorsFromHash();
+		var i;
+
+		if( colorsFromHash ) {
+			for( i = 0; i < colorsFromHash.length; i++ ) {
+				this._addColor( tinycolor( colorsFromHash[ i ] ) );
+			}
+		} else {
+			for( i = 0; i < initialColorCount; i++ ) {
+				this._addRandomColor();
+			}
 		}
 
-		this.liWidth( ( 100 / initialColorCount ) + '%');
+		this.liWidth( ( 100 / this.colors().length ) + '%');
 		this.select( this.colors()[ 1 ] );
+	};
+
+	ColorScheme.prototype._getColorsFromHash = function() {
+		if( !document.location.hash ) {
+			return null;
+		}
+
+		var colors = document.location.hash.split( ',' );
+
+		for( var i = 0; i < colors.length; i++ ) {
+			if( !this._hexCodeRegExp.test( colors[ i ] ) ) {
+				return null;
+			}
+		}
+
+		return colors;
 	};
 
 	ColorScheme.prototype._randomInt = function() {
@@ -65,20 +104,23 @@ define(function( require ){
 	};
 
 	ColorScheme.prototype._addRandomColor = function() {
-		var color = new Color( this );
-		
-		color.set(tinycolor({ 
+		this._addColor(tinycolor({ 
 			r: this._randomInt(),
 			g: this._randomInt(),
 			b: this._randomInt(),
 		}));
+	};
 
+	ColorScheme.prototype._addColor = function( tinyColorInstance ) {
+		var color = new Color( this );
+		color.set( tinyColorInstance );
 		this.colors.push( color );
 	};
 
 	ColorScheme.prototype._update = function() {
 		this.liWidth( ( 100 / this.colors().length ) + '%');
 		this.emit( 'update' );
+		this.updateHash();
 	};
 
 	return ColorScheme;

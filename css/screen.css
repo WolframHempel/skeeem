@@ -32,30 +32,101 @@ html, body, .wrapper{
 }
 
 /******************
+* Loading Screen
+******************/
+header, 
+header .subtitle i,
+#loading-screen{
+	transition: all 800ms ease;
+}
+
+#loading-screen{
+	position: absolute;
+	z-index: 4;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	pointer-events: none;
+	opacity: 0;
+}
+
+.loading #loading-screen{
+	opacity: 1;
+}
+
+@keyframes hue-rotate {
+  from {
+    -webkit-filter: hue-rotate(0);
+    -moz-filter: hue-rotate(0);
+    -ms-filter: hue-rotate(0);
+    filter: hue-rotate(0);
+  }
+  to {
+    -webkit-filter: hue-rotate(360deg);
+    -moz-filter: hue-rotate(360deg);
+    -ms-filter: hue-rotate(360deg);
+    filter: hue-rotate(360deg);
+  }
+}
+
+.loading header{
+	top: 50%;
+	left: 50%;
+	margin-left: -100px;
+	margin-top: -50px;
+}
+
+.loading header .e1, header .e2, header .e3{
+	animation: hue-rotate 5s linear infinite;
+}
+
+.loading header .e1{
+	color: #C00;
+}
+
+.loading header .e2{
+	color: #C3C;
+}
+
+.loading header .e3{
+	color: #C60;
+}
+
+.loading header .subtitle i{
+	opacity: 1;
+}
+
+/******************
 * Header
 ******************/
 header{
 	position: absolute;
-    z-index: 1;
+    z-index: 6;
     top: 15px;
     left: 20px;
 }
 
-header h1, header h1 em{
+header h1, header h1 em span{
 	font-size: 25px;
 	font-weight: 300;
 }
 
-header h1 em{
+header h1 em span{
 	color: #AAA;
 }
 
-header span{
+header .subtitle{
     display: block;
     margin-top: 6px;
     font-weight: 300;
     color: #aaa;
     letter-spacing: 3px;
+}
+
+header .subtitle i{
+	opacity: 0;
 }
 
 /******************
@@ -94,7 +165,7 @@ header span{
 .add-color{
 	float: right;
     position: relative;
-    z-index: 6;
+    z-index: 3;
     font-size: 20px;
     top: 12px;
     left: 16px;
@@ -338,7 +409,7 @@ input[type=range]::-webkit-slider-thumb{
     border-radius: 50%;
     /*background: #000;*/
     position: relative;
-    z-index: 999;
+    z-index: 3;
     border: 2px solid #fff;
     margin-top: 3px;
 }
@@ -352,7 +423,7 @@ input[type=range]::-moz-range-thumb{
     background: #000;
     background-color: black;
     position: relative;
-    z-index: 999;
+    z-index: 3;
     border: 2px solid #fff;
     margin-top: 3px;
 }

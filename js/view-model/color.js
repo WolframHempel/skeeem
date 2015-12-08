@@ -22,6 +22,10 @@ define(function( require ){
 		return this.color.toRgb();
 	};
 
+	Color.prototype.getHex = function() {
+		return '#' + this.color.toHex().toUpperCase();
+	};
+
 	Color.prototype.getArray = function() {
 		var rgb = this.color.toRgb();
 		return [ rgb.r, rgb.g, rgb.b ];
@@ -47,6 +51,7 @@ define(function( require ){
 		this.hsl( tinyColor.toHslString() );
 		this.isDark( tinyColor.toHsl().l < 0.4 );
 		this._colorScheme.emit( 'update' );
+		this._colorScheme.updateHash();
 	};
 
 	return Color;

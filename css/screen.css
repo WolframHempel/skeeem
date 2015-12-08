@@ -463,6 +463,32 @@ footer .right a i{
     width: 230px;
 }
 
+#about i{
+	position: absolute;
+	top: 0;
+	right: 0;
+	font-size: 16px;
+	cursor: pointer;
+	padding: 10px;
+}
+
+#about i:hover{
+	color: #fff;
+}
+
+#about *{
+	color: #ddd;
+}
+
+#about a{
+	color: #fff;
+	cursor: pointer;
+}
+
+#about a:hover{
+	text-decoration: underline;
+}
+
 #about li{
 	margin-bottom: 10px;
 }

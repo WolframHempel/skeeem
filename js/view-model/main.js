@@ -12,6 +12,8 @@ define(function( require ){
 		this.color = null;
 		this._isUpdating = false;
 
+		this.aboutVisible = ko.observable( false );
+
 		this.currentVis = ko.observable( '3d' );
 		this.currentVis.subscribe( this._applyScheme.bind( this ) );
 

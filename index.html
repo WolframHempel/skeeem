@@ -73,8 +73,17 @@
 	</ul>
 </div>
 <footer>
-	<div id="about">
+	<div id="about" data-bind="visible: aboutVisible">
+		<i data-bind="click: aboutVisible.bind( $data, false )">x</i>
 		<ul>
+			<li>
+				<label>License</label>
+				MIT
+			</li>
+			<li>
+				<label>Github</label>
+				<a href="https://github.com/hoxton-one/skeeem">https://github.com/hoxton-one/skeeem</a>
+			</li>
 			<li>
 				<label>Graffiti 3D Model</label>
 				<a href="http://artist-3d.com/free_3d_models/dnm/model_disp.php?uid=3184">"3d graffiti design paint spray chaos by TRAMP1L, INDONESIA, WONOSOBO, CENTER JAVA" - 3d model</a>
@@ -85,13 +94,13 @@
 			</li>
 			<li>
 				<label>About the Author</label>
-				<p>Wolfram Hempel is a co-founder of <a href="https://hoxton-one.com/">Hoxton One</a>, co-author of <a href="http://deepstream.io/">deepstream.io</a>, teaches the odd class at <a href="http://javascript-kurse-berlin.de/">JavaScript Kurse Berlin</a> and really needs to get a personal twitter-handle</p>
+				<p>Wolfram Hempel is a co-founder of <a href="https://hoxton-one.com/">Hoxton One</a>, co-author of <a href="http://deepstream.io/">deepstream.io</a>, teaches the odd class at <a href="http://javascript-kurse-berlin.de/">JavaScript Kurse Berlin</a> and really needs to get a personal twitter handle</p>
 			</li>
 		</ul>
 	</div>
 	<div class="right">
 		<a href="https://twitter.com/jskurseberlin"><i class="fa fa-twitter"></i>@jskurseberlin</a>
-		<a href="#"><i class="fa fa-info"></i>about</a>
+		<a href="#" data-bind="click: aboutVisible.bind( $data, true )"><i class="fa fa-info"></i>about</a>
 	</div>
 	<div class="left">
 		A <a href="http://javascript-kurse-berlin.de/">JavaScript Kurse Berlin</a> Experiment.

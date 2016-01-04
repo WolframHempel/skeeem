@@ -1,2 +1,2 @@
-# coxer
-It's a color-mixer - of course
+# SKEEEM
+Try it at [javascript-kurse-berlin.de/labs/skeeem/]

@@ -1,2 +1,2 @@
 # SKEEEM
-Try it at [javascript-kurse-berlin.de/labs/skeeem/]
+Try it at [http://javascript-kurse-berlin.de/labs/skeeem/]
